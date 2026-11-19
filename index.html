@@ -372,7 +372,7 @@ const openRaw = NEWBOT ? (params.get("open") || "") : DEFAULTS.open;
 const OPENS = (openRaw || "").split(";").filter(x => x.includes("..")).map(x => { const [a,b] = x.split(".."); return { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; });
 const LIMITED = openRaw === "none" || OPENS.length > 0;  // "none" = hech qaysi kun ochiq emas
 const winOf = d => OPENS.find(w => d >= w.from && d < w.to);
-const HOURS = (params.get("hrs") || "").split(",").map(Number).filter(h => h >= 0 && h <= 23 && params.get("hrs") !== "");
+const HOURS = (params.get("hrs") || "").split(",").filter(x => x.trim() !== "").map(Number).filter(h => h >= 0 && h <= 23);
 if (!HOURS.length) HOURS.push(...DEFAULTS.hours);
 const hoursText = () => { const h = HOURS; return (h.at(-1)-h[0] === h.length-1) ? `${pad(h[0])}:00 – ${pad(h.at(-1))}:00` : h.map(x => pad(x)+":00").join(", "); };
 if (!inTelegram && !location.search) { // brauzer sinovi: namunaviy holat
