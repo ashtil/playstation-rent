@@ -28,7 +28,7 @@
   .head{padding:18px 16px 4px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .head h1{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
   .head h1{color:#fff;font-weight:700;letter-spacing:-.01em}
-  .head h1 span{color:#fff;font-weight:300}
+  .head h1 span{color:#a0532d;font-weight:700;text-shadow:0 0 18px rgba(160,72,40,.35)}
   .head p{color:#c3c9d4}
   .head p{color:var(--muted);font-size:13.5px;margin-top:4px}
   .chbtn{flex:none;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);color:var(--text);padding:8px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none}
@@ -54,6 +54,12 @@
   .rate.we b{color:#fff}
   .rate.sp{grid-column:1/-1;background:#0070d1;border-color:#0070d1}
   .rate.sp small,.rate.sp b,.rate.sp b em{color:#fff}
+  .gta{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#ff2e88 0%,#ff7a3d 55%,#ffb547 100%);color:#fff;box-shadow:0 10px 28px rgba(255,80,110,.28)}
+  .gta .gt{flex:none;font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1;padding:7px 9px;border-radius:10px;background:rgba(0,0,0,.28)}
+  .gta b{display:block;font-size:14.5px;font-weight:800}
+  .gta small{display:block;font-size:12px;opacity:.92}
+  .chip.hot{color:#fff;background:linear-gradient(135deg,#ff2e88,#ff7a3d);border-color:transparent}
+  .avail .hrs{display:block;font-size:12.5px;color:#c7cedb;margin-top:3px}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
   .chip{font-size:12px;font-weight:600;color:#c7cedb;background:var(--card2);border:1px solid var(--line);padding:6px 10px;border-radius:10px}
 
@@ -181,6 +187,7 @@
   <div class="pbody">
     <h2>PlayStation 5 Slim Digital</h2>
     <div class="sub" data-i="sub"></div>
+    <div class="gta"><div class="gt">GTA VI</div><div><b data-i="gtaT"></b><small data-i="gtaS"></small></div></div>
     <div class="rates" id="rates"></div>
     <div class="chips" id="chips"></div>
   </div>
@@ -188,7 +195,7 @@
 
 <div class="avail" id="avail" style="display:none">
   <div class="ic">🟢</div>
-  <div><small data-i="availTitle"></small><b id="availTxt"></b></div>
+  <div><small data-i="availTitle"></small><b id="availTxt"></b><span class="hrs" id="availHrs"></span></div>
 </div>
 
 <div class="sec">
@@ -266,12 +273,14 @@
    Narx va bo'sh vaqtni bot o'zi URL orqali yuboradi (bot.py dagi sozlamalar).
    Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
    O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
-const DEFAULTS = { wd: 280000, we: 350000, sp: "", open: "", monthsAhead: 12, photo: "ps5_blue.webp", hours: [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23] };
+const DEFAULTS = { wd: 280000, we: 300000, sp: "2026-11-23:300000,2026-11-24:300000,2026-11-25:300000",
+  open: "2026-11-23T20:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-25T20:00",
+  monthsAhead: 12, photo: "ps5_blue.webp", hours: [18,19,20] };  // hozircha faqat kechqurun, 20:00 gacha
 /* ========================================================== */
 
 const I18N = {
-  uz: { payCash:"💵 Naqd", payCard:"💳 Karta (Click/Payme)", rPay:"To'lov", payNote:"konsolni olganda", sTime:"Olish vaqti", tNote:"↩️ Qaytarish — {d}, soat {h} (har bir kun = 24 soat).", tNone:"Bu kunlar uchun mos vaqt yo'q — boshqa sanani tanlang", eTime:"Olish vaqtini tanlang", tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
-        wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", perDay:"/ sutka", chips:["2 ta pult","Mashhur o'yinlar","HDMI kabel","Tekshirilgan"],
+  uz: { payCash:"💵 Naqd", payCard:"💳 Karta (Click/Payme)", rPay:"To'lov", payNote:"konsolni olganda", sTime:"Olish vaqti", tNote:"↩️ Qaytarish — {d}, soat {h} (har bir kun = 24 soat).", tNone:"Bu kunlar uchun mos vaqt yo'q — boshqa sanani tanlang", eTime:"Olish vaqtini tanlang", tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", gtaT:"GTA 6 bor! 🔥", gtaS:"Konsolda o'rnatilgan — birinchilardan bo'lib o'ynang", hrsLbl:"🌙 Olib ketish / qaytarish: ", eveOnly:"Hozircha faqat kechqurun", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
+        wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", perDay:"/ sutka", chips:["🔥 GTA 6","2 ta pult","Mashhur o'yinlar","HDMI kabel","Tekshirilgan"],
         freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Kunlarni tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
         lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Qimmatroq",
         hint0:"👆 Kerakli kunlarni bosing — har bir bosilgan kun ko'k bo'ladi", hint1:"✅ Yana kun qo'shish uchun bosing. Bekor qilish uchun ko'k kunni qayta bosing", hint2:"", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
@@ -284,8 +293,8 @@ const I18N = {
         btnPick:"Olish kunini tanlang", btnEnd:"Qaytarish kunini tanlang", btnOrder:"Buyurtma berish",
         eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
         months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
-  ru: { payCash:"💵 Наличные", payCard:"💳 Карта (Click/Payme)", rPay:"Оплата", payNote:"при получении", sTime:"Время получения", tNote:"↩️ Возврат — {d}, в {h} (каждый день = 24 часа).", tNone:"Для этих дат нет подходящего времени — выберите другие", eTime:"Выберите время получения", tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
-        wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", perDay:"/ сутки", chips:["2 геймпада","Топовые игры","HDMI кабель","Проверена"],
+  ru: { payCash:"💵 Наличные", payCard:"💳 Карта (Click/Payme)", rPay:"Оплата", payNote:"при получении", sTime:"Время получения", tNote:"↩️ Возврат — {d}, в {h} (каждый день = 24 часа).", tNone:"Для этих дат нет подходящего времени — выберите другие", eTime:"Выберите время получения", tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", gtaT:"Есть GTA 6! 🔥", gtaS:"Уже установлена — играйте одними из первых", hrsLbl:"🌙 Получение / возврат: ", eveOnly:"Пока только вечером", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
+        wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", perDay:"/ сутки", chips:["🔥 GTA 6","2 геймпада","Топовые игры","HDMI кабель","Проверена"],
         freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
         lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Дороже",
         hint0:"👆 Нажмите нужные дни — каждый выбранный день станет синим", hint1:"✅ Нажмите ещё, чтобы добавить дни. Чтобы убрать — нажмите синий день снова", hint2:"", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
@@ -298,8 +307,8 @@ const I18N = {
         btnPick:"Выберите день получения", btnEnd:"Выберите день возврата", btnOrder:"Оформить заказ",
         eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
         months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
-  en: { payCash:"💵 Cash", payCard:"💳 Card (Click/Payme)", rPay:"Payment", payNote:"at pickup", sTime:"Pickup time", tNote:"↩️ Return — {d} at {h} (each day = 24 hours).", tNone:"No suitable time for these dates — pick other dates", eTime:"Pick a pickup time", tagline:"PS5 rental in Tashkent — daily, easy and fast", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
-        wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", perDay:"/ day", chips:["2 controllers","Top games","HDMI cable","Checked"],
+  en: { payCash:"💵 Cash", payCard:"💳 Card (Click/Payme)", rPay:"Payment", payNote:"at pickup", sTime:"Pickup time", tNote:"↩️ Return — {d} at {h} (each day = 24 hours).", tNone:"No suitable time for these dates — pick other dates", eTime:"Pick a pickup time", tagline:"PS5 rental in Tashkent — daily, easy and fast", gtaT:"GTA 6 is here! 🔥", gtaS:"Installed and ready — be among the first to play", hrsLbl:"🌙 Pickup / return: ", eveOnly:"Evenings only for now", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
+        wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", perDay:"/ day", chips:["🔥 GTA 6","2 controllers","Top games","HDMI cable","Checked"],
         freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
         lFree:"Available", lBusy:"Booked", lSel:"Selected", lWe:"Higher price",
         hint0:"👆 Tap the days you need — each selected day turns blue", hint1:"✅ Tap more days to add. Tap a blue day again to remove it", hint2:"", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
@@ -355,9 +364,14 @@ const WD = +params.get("wd") || DEFAULTS.wd, WE = +params.get("we") || DEFAULTS.
 const SPECIAL = {};
 (params.get("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
 const booked = new Set((params.get("ps5") || "").split(",").filter(Boolean));
-let OPEN = null; // {from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}
-const openRaw = params.get("open") ?? DEFAULTS.open;
-if (openRaw && openRaw.includes("..")) { const [a,b] = openRaw.split(".."); OPEN = { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; }
+// Bo'sh oraliqlar: [{from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}, ...]. Bo'sh ro'yxat = hamma kun ochiq.
+const openRaw = params.has("open") ? params.get("open") : (location.search ? "" : DEFAULTS.open);
+const OPENS = (openRaw || "").split(";").filter(x => x.includes("..")).map(x => { const [a,b] = x.split(".."); return { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; });
+const LIMITED = openRaw === "none" || OPENS.length > 0;  // "none" = hech qaysi kun ochiq emas
+const winOf = d => OPENS.find(w => d >= w.from && d < w.to);
+const HOURS = (params.get("hrs") || "").split(",").map(Number).filter(h => h >= 0 && h <= 23 && params.get("hrs") !== "");
+if (!HOURS.length) HOURS.push(...DEFAULTS.hours);
+const hoursText = () => { const h = HOURS; return (h.at(-1)-h[0] === h.length-1) ? `${pad(h[0])}:00 – ${pad(h.at(-1))}:00` : h.map(x => pad(x)+":00").join(", "); };
 if (!inTelegram && !location.search) { // brauzer sinovi: namunaviy holat
   const t = new Date(); [3,4,9].forEach(k => { const d = new Date(t); d.setDate(t.getDate()+k); booked.add(iso(d)); });
 }
@@ -367,7 +381,7 @@ const TODAY = iso(today);
 const priceOf = d => SPECIAL[d] ?? ([0,6].includes(parseIso(d).getDay()) ? WE : WD);
 const tierOf = p => { const u = [...new Set([WD, WE, ...Object.values(SPECIAL)])].sort((x,y)=>x-y); if (u.length < 2) return 1; const r = u.indexOf(p)/(u.length-1); return r < 0.34 ? 0 : r < 0.67 ? 1 : 2; };
 const isWeekend = d => [0,6].includes(parseIso(d).getDay());
-const nightFree = d => d >= TODAY && !booked.has(d) && !(OPEN && (d < OPEN.from || d >= OPEN.to));
+const nightFree = d => d >= TODAY && !booked.has(d) && !(LIMITED && !winOf(d));
 
 const firstFree = (() => { for (let i=0;i<400;i++){ const d = addDays(TODAY,i); if (nightFree(d)) return d; } return null; })();
 const state = { days:new Set(), time:null,
@@ -414,12 +428,14 @@ function renderStatic(){
     rates += `<div class="rate sp"><small>⭐ ${L.sp} · ${range}</small><b>${vals.map(fmt).join(" / ")} <em>${L.perDay}</em></b></div>`;
   }
   $("rates").innerHTML = rates;
-  $("chips").innerHTML = L.chips.map(c => `<span class="chip">${c}</span>`).join("");
+  $("chips").innerHTML = L.chips.map((c,i) => `<span class="chip${i===0?" hot":""}">${c}</span>`).join("");
   $("pillTxt").textContent = firstFree ? L.freeNow : L.noFree;
   $("pill").classList.toggle("busy", !firstFree);
-  if (OPEN) {
+  const ws = OPENS.filter(w => w.to > TODAY);
+  if (ws.length || HOURS.length < 16) {
     $("avail").style.display = "flex";
-    $("availTxt").textContent = `${human(OPEN.from)} ${OPEN.fromT}  →  ${human(OPEN.to)} ${OPEN.toT}`;
+    $("availTxt").innerHTML = ws.length ? ws.map(w => `${human(w.from)} ${w.fromT}  →  ${human(w.to)} ${w.toT}`).join("<br>") : L.eveOnly;
+    $("availHrs").textContent = L.hrsLbl + hoursText();
   }
 }
 
@@ -473,9 +489,10 @@ function calc(){
 function validTimes(){
   if (!state.days.size) return [];
   const now = new Date(), nowH = now.getHours(), bl = blocks();
-  return DEFAULTS.hours.map(h => pad(h)+":00").filter(t => bl.every(b => {
-    if (OPEN && b.from === OPEN.from && t < OPEN.fromT) return false;
-    if (OPEN && b.to === OPEN.to && t > OPEN.toT) return false;
+  return HOURS.map(h => pad(h)+":00").filter(t => bl.every(b => {
+    const w = winOf(b.from);
+    if (w && b.from === w.from && t < w.fromT) return false;
+    if (w && b.to === w.to && t > w.toT) return false;
     if (b.from === TODAY && +t.slice(0,2) <= nowH) return false;
     return true;
   }));
