@@ -2,80 +2,163 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>PS5 Arenda</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>PlayRent — PS5 ijarasi</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0e1116; --card:#171c24; --card2:#1f2631; --text:#f2f4f8; --muted:#8b95a7;
-    --accent:#2f6bff; --accent2:#00c2ff; --ok:#22c55e; --bad:#ef4444; --line:#2a3240;
+    --bg:#07080d; --surface:#10131c; --surface2:#171b27; --surface3:#1e2333;
+    --text:#f5f7fb; --muted:#8a93a8; --dim:#4b5366; --line:rgba(255,255,255,.07);
+    --blue:#3d7bff; --cyan:#3fd0ff; --violet:#8b5cff; --ok:#2dd4a0; --bad:#ff5a6a;
+    --grad:linear-gradient(135deg,#3d7bff 0%,#8b5cff 100%);
+    --r:20px;
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:110px}
-  header{padding:18px 16px 8px}
-  header h1{margin:0;font-size:22px}
-  header p{margin:4px 0 0;color:var(--muted);font-size:13px}
-  .section{padding:8px 16px}
-  .label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 8px}
-  .products{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .product{background:var(--card);border:2px solid transparent;border-radius:16px;padding:12px;cursor:pointer;transition:.15s}
-  .product.active{border-color:var(--accent);background:var(--card2)}
-  .product .emoji{font-size:34px}
-  .product .name{font-weight:600;margin-top:6px}
-  .product .desc{color:var(--muted);font-size:12px;margin-top:2px;min-height:32px}
-  .product .price{margin-top:8px;font-weight:700;color:var(--accent2)}
-  .product .price small{color:var(--muted);font-weight:400}
-  .cal{background:var(--card);border-radius:16px;padding:12px}
-  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .cal-head b{font-size:16px}
-  .nav{background:var(--card2);border:0;color:var(--text);width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer}
-  .nav:disabled{opacity:.3}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
-  .dow{font-size:11px;color:var(--muted);padding:4px 0}
-  .day{height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:500;cursor:pointer;position:relative}
-  .day.free{background:var(--card2)}
-  .day.past{color:#4a5262;cursor:default}
-  .day.booked{background:rgba(239,68,68,.15);color:#f87171;text-decoration:line-through;cursor:not-allowed}
-  .day.sel{background:var(--accent);color:#fff}
-  .day.inrange{background:rgba(47,107,255,.35);color:#fff}
-  .day.today::after{content:"";position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:var(--accent2)}
-  .legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px;flex-wrap:wrap}
-  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-  .hint{font-size:13px;color:var(--muted);margin-top:8px}
-  .field{margin-bottom:10px}
-  .field input,.field textarea{width:100%;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;font-size:15px;outline:none;font-family:inherit}
-  .field input:focus,.field textarea:focus{border-color:var(--accent)}
-  .seg{display:flex;background:var(--card);border-radius:12px;padding:4px;gap:4px;margin-bottom:10px}
-  .seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:10px;border-radius:9px;font-size:14px;cursor:pointer}
-  .seg button.active{background:var(--card2);color:var(--text);font-weight:600}
-  .addon{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer}
-  .addon input{width:20px;height:20px;accent-color:var(--accent)}
-  .summary{background:var(--card);border-radius:16px;padding:14px}
-  .row{display:flex;justify-content:space-between;padding:4px 0;color:var(--muted)}
-  .row b{color:var(--text)}
-  .total{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-size:18px}
-  .total b{color:var(--accent2)}
-  .rules{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
-  .fallback-btn{position:fixed;left:16px;right:16px;bottom:16px;padding:16px;border:0;border-radius:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:600;display:none}
-  .fallback-btn:disabled{opacity:.4}
-  .toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:#222a36;padding:10px 14px;border-radius:10px;font-size:13px;display:none;z-index:9;max-width:90%}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0}
+  html{background:var(--bg)}
+  body{color:var(--text);font:15px/1.45 "Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(120px + env(safe-area-inset-bottom));
+       background:radial-gradient(900px 500px at 85% -10%,rgba(139,92,255,.22),transparent 60%),radial-gradient(700px 500px at -10% 10%,rgba(61,123,255,.20),transparent 60%),var(--bg);min-height:100vh}
+  button{font-family:inherit}
+
+  /* ---------- top bar ---------- */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 6px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em}
+  .logo{width:34px;height:34px;border-radius:11px;background:var(--grad);display:grid;place-items:center;box-shadow:0 6px 20px rgba(61,123,255,.45)}
+  .logo svg{width:18px;height:18px}
+  .city{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+
+  /* ---------- hero ---------- */
+  .hero{margin:12px 16px 0;border-radius:28px;position:relative;overflow:hidden;background:linear-gradient(160deg,#151a2b 0%,#0c0f18 100%);border:1px solid var(--line)}
+  .hero-media{height:230px;position:relative;display:grid;place-items:center;overflow:hidden}
+  .hero-media::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(61,123,255,.55),rgba(139,92,255,.15) 55%,transparent 70%);filter:blur(10px)}
+  .hero-media img{position:relative;max-width:88%;max-height:210px;object-fit:contain;filter:drop-shadow(0 25px 35px rgba(0,0,0,.6));transition:opacity .25s}
+  .hero-media .ph{position:relative;font-size:88px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.6))}
+  .badge{position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:rgba(45,212,160,.14);color:var(--ok);border:1px solid rgba(45,212,160,.3);z-index:2}
+  .badge.busy{background:rgba(255,90,106,.12);color:var(--bad);border-color:rgba(255,90,106,.3)}
+  .hero-body{padding:4px 20px 20px}
+  .hero-title{font-size:26px;font-weight:800;letter-spacing:-.03em}
+  .hero-sub{color:var(--muted);font-size:14px;margin-top:2px}
+  .hero-price{display:flex;align-items:baseline;gap:6px;margin-top:12px}
+  .hero-price b{font-size:28px;font-weight:800;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-price span{color:var(--muted);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .chip{font-size:12px;font-weight:600;color:#c9d1e3;background:rgba(255,255,255,.05);border:1px solid var(--line);padding:6px 10px;border-radius:10px}
+
+  /* ---------- product tabs ---------- */
+  .tabs{display:flex;gap:8px;margin:14px 16px 0;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:1;min-width:130px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);cursor:pointer;transition:.2s}
+  .tab.active{border-color:transparent;background:linear-gradient(var(--surface2),var(--surface2)) padding-box,var(--grad) border-box}
+  .tab .thumb{width:40px;height:40px;border-radius:12px;background:var(--surface3);display:grid;place-items:center;overflow:hidden;flex:none;font-size:20px}
+  .tab .thumb img{width:100%;height:100%;object-fit:cover}
+  .tab .t-name{font-weight:700;font-size:13px}
+  .tab .t-price{font-size:12px;color:var(--muted)}
+
+  /* ---------- sections ---------- */
+  .section{margin:22px 16px 0}
+  .step{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .step .n{width:24px;height:24px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--cyan)}
+  .step h2{font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+
+  /* ---------- calendar ---------- */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .cal-head b{font-size:16px;font-weight:800}
+  .nav{background:var(--surface2);border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:12px;font-size:18px;cursor:pointer;display:grid;place-items:center}
+  .nav:disabled{opacity:.25}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}
+  .dow{font-size:11px;font-weight:700;color:var(--dim);padding:2px 0 6px;text-transform:uppercase}
+  .day{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;position:relative;transition:background .15s,transform .1s}
+  .day:active{transform:scale(.92)}
+  .day.free{background:var(--surface2);color:var(--text)}
+  .day.past{color:#2f3545;cursor:default}
+  .day.booked{background:repeating-linear-gradient(135deg,rgba(255,90,106,.12) 0 6px,rgba(255,90,106,.05) 6px 12px);color:rgba(255,90,106,.75);cursor:not-allowed}
+  .day.sel{background:var(--grad);color:#fff;box-shadow:0 6px 18px rgba(61,123,255,.45)}
+  .day.inrange{background:rgba(61,123,255,.22);color:#fff}
+  .day.today::after{content:"";position:absolute;bottom:6px;width:4px;height:4px;border-radius:50%;background:var(--cyan)}
+  .day.sel.today::after{background:#fff}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:14px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+  .hint{font-size:13px;color:var(--muted);margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+
+  /* ---------- addon ---------- */
+  .addon{display:flex;align-items:center;gap:12px;cursor:pointer}
+  .addon .thumb{width:48px;height:48px;border-radius:14px;background:var(--surface2);display:grid;place-items:center;overflow:hidden;font-size:22px;flex:none}
+  .addon .thumb img{width:100%;height:100%;object-fit:cover}
+  .addon .txt{flex:1}
+  .addon .txt b{display:block;font-size:15px}
+  .addon .txt small{color:var(--muted);font-size:13px}
+  .switch{width:50px;height:30px;border-radius:999px;background:var(--surface3);position:relative;transition:.2s;flex:none}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .addon input{display:none}
+  .addon input:checked + .switch{background:var(--grad)}
+  .addon input:checked + .switch::after{left:23px}
+
+  /* ---------- form ---------- */
+  .field{position:relative;margin-bottom:10px}
+  .field svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
+  .field.ta svg{top:20px;transform:none}
+  .field input,.field textarea{width:100%;background:var(--surface2);border:1.5px solid transparent;color:var(--text);border-radius:14px;padding:14px 14px 14px 44px;font-size:15px;outline:none;font-family:inherit;transition:.15s}
+  .field textarea{resize:none}
+  .field input::placeholder,.field textarea::placeholder{color:var(--dim)}
+  .field input:focus,.field textarea:focus{border-color:var(--blue);background:var(--surface3)}
+  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-radius:14px;padding:4px;gap:4px;margin-bottom:10px}
+  .seg button{border:0;background:transparent;color:var(--muted);padding:11px 6px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+  .seg button.active{background:var(--surface3);color:var(--text);box-shadow:0 2px 10px rgba(0,0,0,.35)}
+
+  .share{width:100%;display:none;align-items:center;justify-content:center;gap:8px;margin:-2px 0 10px;padding:12px;border-radius:14px;border:1.5px dashed rgba(63,208,255,.45);background:rgba(63,208,255,.08);color:var(--cyan);font-size:14px;font-weight:700;cursor:pointer}
+  .share.done{border-style:solid;border-color:rgba(45,212,160,.4);background:rgba(45,212,160,.1);color:var(--ok)}
+  .channel{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(61,123,255,.15),rgba(139,92,255,.15));border:1px solid rgba(139,92,255,.3);cursor:pointer;text-decoration:none;color:var(--text)}
+  .channel .ic{width:42px;height:42px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-size:20px;flex:none}
+  .channel b{display:block;font-size:14px}.channel small{color:var(--muted);font-size:12px}
+  .channel .go{margin-left:auto;color:var(--cyan);font-size:20px}
+  /* ---------- summary ---------- */
+  .row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;color:var(--muted);font-size:14px}
+  .row b{color:var(--text);font-weight:700;text-align:right}
+  .total{border-top:1px dashed rgba(255,255,255,.12);margin-top:8px;padding-top:14px}
+  .total span{color:var(--text);font-weight:700;font-size:16px}
+  .total b{font-size:22px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .trust div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;font-size:11px;color:var(--muted);font-weight:600}
+  .trust div b{display:block;font-size:18px;margin-bottom:4px}
+  .rules{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7;padding:0 4px}
+
+  /* ---------- bottom bar (browser fallback) ---------- */
+  .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 60%,transparent);display:none}
+  .bar button{width:100%;padding:17px;border:0;border-radius:16px;background:var(--grad);color:#fff;font-size:16px;font-weight:800;box-shadow:0 10px 30px rgba(61,123,255,.4);cursor:pointer}
+  .bar button:disabled{background:var(--surface3);color:var(--dim);box-shadow:none}
+  .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-120%);background:rgba(30,35,51,.95);backdrop-filter:blur(10px);border:1px solid var(--line);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;z-index:9;max-width:90%;transition:transform .25s}
+  .toast{visibility:hidden}
+  .toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🎮 PS5 Arenda — Toshkent</h1>
-  <p>Konsolni tanlang, bo'sh kunlarni belgilang va buyurtma bering</p>
-</header>
-
-<div class="section">
-  <div class="label">1. Nima kerak?</div>
-  <div class="products" id="products"></div>
+<div class="top">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 6h10a5 5 0 0 1 4.9 6l-1 5a2.5 2.5 0 0 1-4.3 1.2L14.5 16h-5l-2.1 2.2A2.5 2.5 0 0 1 3.1 17l-1-5A5 5 0 0 1 7 6Zm1 3v1.5H6.5v1.5H8v1.5h1.5V12H11v-1.5H9.5V9H8Zm8 .5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm2 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg></div>
+    PlayRent
+  </div>
+  <div class="city" data-i="city">📍 Toshkent</div>
 </div>
 
+<div class="hero">
+  <div class="badge" id="badge">● Bugun bo'sh</div>
+  <div class="hero-media" id="heroMedia"></div>
+  <div class="hero-body">
+    <div class="hero-title" id="heroTitle"></div>
+    <div class="hero-sub" id="heroSub"></div>
+    <div class="hero-price"><b id="heroPrice"></b><span data-i="perDay">/ sutka</span></div>
+    <div class="chips" id="heroChips"></div>
+  </div>
+</div>
+
+<div class="tabs" id="products"></div>
+
 <div class="section">
-  <div class="label">2. Kunlarni tanlang</div>
-  <div class="cal">
+  <div class="step"><div class="n">1</div><h2 data-i="s1">Kunlarni tanlang</h2></div>
+  <div class="card">
     <div class="cal-head">
       <button class="nav" id="prev">‹</button>
       <b id="monthTitle"></b>
@@ -83,102 +166,183 @@
     </div>
     <div class="grid" id="grid"></div>
     <div class="legend">
-      <span><i style="background:var(--card2)"></i>Bo'sh</span>
-      <span><i style="background:rgba(239,68,68,.5)"></i>Band</span>
-      <span><i style="background:var(--accent)"></i>Tanlangan</span>
+      <span><i style="background:var(--surface3)"></i><b data-i="lFree" style="font-weight:500">Bo'sh</b></span>
+      <span><i style="background:rgba(255,90,106,.5)"></i><b data-i="lBusy" style="font-weight:500">Band</b></span>
+      <span><i style="background:var(--grad)"></i><b data-i="lSel" style="font-weight:500">Tanlangan</b></span>
     </div>
   </div>
-  <div class="hint" id="hint">Boshlanish kunini, keyin tugash kunini bosing. Bir kunga — o'sha kunni ikki marta bosing.</div>
+  <div class="hint" id="hint" data-i="hint"></div>
 </div>
 
 <div class="section" id="addonsBox">
-  <div class="label">3. Qo'shimcha</div>
-  <label class="addon" id="addonPult">
-    <span>🕹 Qo'shimcha pult <small style="color:var(--muted)">(+<span id="addonPrice"></span>/kun)</small></span>
-    <input type="checkbox" id="extraPult">
+  <div class="step"><div class="n">2</div><h2 data-i="s2">Qo'shimcha</h2></div>
+  <label class="card addon">
+    <div class="thumb" id="addonThumb"></div>
+    <div class="txt"><b data-i="addon">Uchinchi pult</b><small>+<span id="addonPrice"></span> <span data-i="perDay"></span></small></div>
+    <input type="checkbox" id="extraPult"><div class="switch"></div>
   </label>
 </div>
 
 <div class="section">
-  <div class="label">4. Ma'lumotlaringiz</div>
-  <div class="field"><input id="name" placeholder="Ismingiz" autocomplete="name"></div>
-  <div class="field"><input id="phone" type="tel" placeholder="Telefon: +998 90 123 45 67" autocomplete="tel"></div>
+  <div class="step"><div class="n" id="formStep">3</div><h2 data-i="s3">Ma'lumotlaringiz</h2></div>
+  <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" placeholder="Ismingiz" autocomplete="name"></div>
+  <div class="field"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><input id="phone" type="tel" placeholder="+998 90 123 45 67" autocomplete="tel"></div>
+  <button class="share" id="shareBtn" type="button"></button>
   <div class="seg" id="deliverySeg">
-    <button data-v="pickup" class="active">🏠 O'zim olib ketaman</button>
-    <button data-v="delivery">🚕 Yetkazib berish</button>
+    <button data-v="pickup" class="active" data-i="pickup"></button>
+    <button data-v="delivery" data-i="delivery"></button>
   </div>
-  <div class="field" id="addressBox" style="display:none"><input id="address" placeholder="Manzil (tuman, ko'cha, mo'ljal)"></div>
-  <div class="field"><textarea id="comment" rows="2" placeholder="Izoh (ixtiyoriy): qaysi o'yinlar kerak, vaqt va h.k."></textarea></div>
+  <div class="field" id="addressBox" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12Z"/><circle cx="12" cy="10" r="3"/></svg><input id="address" data-ph="address" placeholder="Manzil: tuman, ko'cha, mo'ljal"></div>
+  <div class="field ta"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><textarea id="comment" rows="2" data-ph="comment" placeholder="Izoh: qaysi o'yinlar kerak, qaysi vaqtda…"></textarea></div>
 </div>
 
 <div class="section">
-  <div class="summary">
-    <div class="row"><span>Mahsulot</span><b id="sProduct">—</b></div>
-    <div class="row"><span>Sanalar</span><b id="sDates">—</b></div>
-    <div class="row"><span>Kunlar soni</span><b id="sDays">0</b></div>
-    <div class="row" id="sAddonRow" style="display:none"><span>Qo'shimcha pult</span><b id="sAddon"></b></div>
-    <div class="row" id="sDeliveryRow" style="display:none"><span>Yetkazib berish</span><b id="sDelivery"></b></div>
-    <div class="row total"><span>Jami</span><b id="sTotal">0 so'm</b></div>
+  <div class="step"><div class="n" id="sumStep">4</div><h2 data-i="s4">Buyurtma</h2></div>
+  <div class="card">
+    <div class="row"><span data-i="rProduct"></span><b id="sProduct">—</b></div>
+    <div class="row"><span data-i="rDates"></span><b id="sDates">—</b></div>
+    <div class="row"><span data-i="rDays"></span><b id="sDays">0 kun</b></div>
+    <div class="row" id="sAddonRow" style="display:none"><span data-i="addon"></span><b id="sAddon"></b></div>
+    <div class="row" id="sDeliveryRow" style="display:none"><span data-i="rDelivery"></span><b id="sDelivery"></b></div>
+    <div class="row total"><span data-i="rTotal"></span><b id="sTotal">0 so'm</b></div>
   </div>
+  <div class="trust">
+    <div><b>🛡</b><span data-i="t1"></span></div>
+    <div><b>⚡</b><span data-i="t2"></span></div>
+    <div><b>🎮</b><span data-i="t3"></span></div>
+  </div>
+  <a class="channel" id="channelCard" href="https://t.me/ps_5_gta_6" target="_blank">
+    <div class="ic">📢</div>
+    <div><b>@ps_5_gta_6</b><small data-i="chSub"></small></div>
+    <div class="go">›</div>
+  </a>
   <div class="rules" id="rules"></div>
 </div>
 
-<button class="fallback-btn" id="fallbackBtn">Buyurtma berish</button>
+<div class="bar" id="bar"><button id="fallbackBtn">Kunlarni tanlang</button></div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============ SOZLAMALAR (narxlarni shu yerda o'zgartiring) ============ */
+/* ================= SOZLAMALAR — narx, rasm, matnlarni shu yerda o'zgartiring =================
+   Rasmlar: o'zingizning PS5 va pult rasmlaringizni GitHub repoga (index.html yoniga)
+   "ps5.jpg" va "pult.jpg" nomi bilan yuklang. Rasm bo'lmasa emoji ko'rinadi.            */
 const CONFIG = {
   products: [
-    { id: "ps5",  emoji: "🎮", name: "PS5 Slim",      desc: "Konsol + 2 ta pult + o'yinlar", price: 150000 },
-    { id: "pult", emoji: "🕹", name: "Pult (alohida)", desc: "DualSense pult",               price: 50000 },
+    { id: "ps5",  emoji: "🎮", img: "ps5.jpg",  price: 150000,
+      name:  { uz: "PlayStation 5 Slim", ru: "PlayStation 5 Slim", en: "PlayStation 5 Slim" },
+      short: { uz: "PS5 Slim", ru: "PS5 Slim", en: "PS5 Slim" },
+      sub:   { uz: "Konsol + 2 ta DualSense pult", ru: "Консоль + 2 геймпада DualSense", en: "Console + 2 DualSense controllers" },
+      chips: { uz: ["4K • 120 FPS", "2 ta pult", "Mashhur o'yinlar", "HDMI kabel"],
+               ru: ["4K • 120 FPS", "2 геймпада", "Топовые игры", "HDMI кабель"],
+               en: ["4K • 120 FPS", "2 controllers", "Top games", "HDMI cable"] } },
+    { id: "pult", emoji: "🕹", img: "pult.jpg", price: 50000,
+      name:  { uz: "DualSense pult", ru: "Геймпад DualSense", en: "DualSense controller" },
+      short: { uz: "Pult", ru: "Геймпад", en: "Controller" },
+      sub:   { uz: "Alohida ijaraga", ru: "Отдельная аренда", en: "Rent separately" },
+      chips: { uz: ["Simsiz", "Zaryadlangan", "Haptic feedback"],
+               ru: ["Беспроводной", "Заряжен", "Haptic feedback"],
+               en: ["Wireless", "Fully charged", "Haptic feedback"] } },
   ],
-  extraPultPrice: 50000,   // PS5 bilan qo'shimcha pult, kuniga
-  deliveryPrice: 0,        // yetkazib berish narxi (0 = kelishiladi)
-  maxDays: 14,             // eng ko'p necha kunga ijaraga berish mumkin
-  monthsAhead: 2,          // kalendarda necha oy oldinga ko'rsatiladi
-  rules: "• 1 kun = 24 soat (sutka).<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi."
+  extraPultPrice: 50000,
+  deliveryPrice: 0,       // 0 = "kelishiladi"
+  maxDays: 14,
+  monthsAhead: 2,
 };
-/* ======================================================================= */
+/* ============================================================================================ */
+
+/* ======================= TARJIMALAR ======================= */
+const I18N = {
+  uz: { city:"📍 Toshkent", share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", chSub:"Yangiliklar, chegirmalar va bo'sh kunlar",  perDay:"/ sutka", s1:"Kunlarni tanlang", s2:"Qo'shimcha", s3:"Ma'lumotlaringiz", s4:"Buyurtma",
+        lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", hint:"👆 Boshlanish kunini, keyin tugash kunini bosing. 1 kunga — o'sha kunni ikki marta.",
+        addon:"Uchinchi pult", name:"Ismingiz", address:"Manzil: tuman, ko'cha, mo'ljal", comment:"Izoh: qaysi o'yinlar kerak, qaysi vaqtda…",
+        pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish", rProduct:"Mahsulot", rDates:"Sanalar", rDays:"Muddat",
+        rDelivery:"Yetkazib berish", rTotal:"Jami", t1:"Tekshirilgan konsol", t2:"Tez tasdiqlash", t3:"O'yinlar o'rnatilgan",
+        rules:"• 1 sutka = 24 soat.<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
+        days:"kun", som:"so'm", negotiable:"kelishiladi", freeToday:"● Bugun bo'sh", busyToday:"● Bugun band",
+        btnPick:"Kunlarni tanlang", btnEnd:"Tugash kunini tanlang", btnOrder:"Buyurtma berish",
+        eRange:"Oraliqda band kun bor — boshqa sanalarni tanlang", eMax:"Ko'pi bilan {n} kunga olish mumkin", eDays:"Avval kunlarni tanlang",
+        eName:"Ismingizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
+        months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
+  ru: { city:"📍 Ташкент", share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", chSub:"Новости, скидки и свободные даты",  perDay:"/ сутки", s1:"Выберите даты", s2:"Дополнительно", s3:"Ваши данные", s4:"Заказ",
+        lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", hint:"👆 Нажмите день начала, затем день окончания. На 1 день — нажмите день дважды.",
+        addon:"Третий геймпад", name:"Ваше имя", address:"Адрес: район, улица, ориентир", comment:"Комментарий: какие игры нужны, время…",
+        pickup:"🏠 Самовывоз", delivery:"🚕 Доставка", rProduct:"Товар", rDates:"Даты", rDays:"Срок",
+        rDelivery:"Доставка", rTotal:"Итого", t1:"Проверенная консоль", t2:"Быстрое подтверждение", t3:"Игры установлены",
+        rules:"• 1 сутки = 24 часа.<br>• При получении нужен паспорт или залог.<br>• После заказа администратор свяжется с вами для подтверждения.",
+        days:"дн.", som:"сум", negotiable:"по договорённости", freeToday:"● Сегодня свободна", busyToday:"● Сегодня занята",
+        btnPick:"Выберите даты", btnEnd:"Выберите дату окончания", btnOrder:"Оформить заказ",
+        eRange:"В диапазоне есть занятые дни — выберите другие даты", eMax:"Максимум {n} дней", eDays:"Сначала выберите даты",
+        eName:"Укажите имя", ePhone:"Укажите правильный номер телефона", eAddr:"Укажите адрес",
+        months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
+  en: { city:"📍 Tashkent", share:"📱 Use my Telegram number", shared:"✅ Number added", chSub:"News, discounts and free dates",  perDay:"/ day", s1:"Pick your dates", s2:"Extras", s3:"Your details", s4:"Order",
+        lFree:"Free", lBusy:"Booked", lSel:"Selected", hint:"👆 Tap the start day, then the end day. For 1 day — tap the same day twice.",
+        addon:"Third controller", name:"Your name", address:"Address: district, street, landmark", comment:"Comment: which games, what time…",
+        pickup:"🏠 Pickup", delivery:"🚕 Delivery", rProduct:"Item", rDates:"Dates", rDays:"Duration",
+        rDelivery:"Delivery", rTotal:"Total", t1:"Checked console", t2:"Fast confirmation", t3:"Games installed",
+        rules:"• 1 day = 24 hours.<br>• ID or a deposit is required at pickup.<br>• After ordering, the admin will contact you to confirm.",
+        days:"days", som:"UZS", negotiable:"negotiable", freeToday:"● Free today", busyToday:"● Booked today",
+        btnPick:"Pick your dates", btnEnd:"Pick the end date", btnOrder:"Place order",
+        eRange:"Booked days in range — pick other dates", eMax:"Maximum {n} days", eDays:"Pick your dates first",
+        eName:"Enter your name", ePhone:"Enter a valid phone number", eAddr:"Enter your address",
+        months:["January","February","March","April","May","June","July","August","September","October","November","December"], dow:["Mo","Tu","We","Th","Fr","Sa","Su"] },
+};
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const inTelegram = !!(tg && tg.initData);
-const MONTHS = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
-const DOW = ["Du","Se","Ch","Pa","Ju","Sh","Ya"];
+const params = new URLSearchParams(location.search);
+const tgLang = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
+const LANG = I18N[params.get("lang")] ? params.get("lang") : (I18N[tgLang] ? tgLang : "uz");
+const L = I18N[LANG];
+document.documentElement.lang = LANG;
+const MONTHS = L.months, DOW = L.dow;
 const $ = id => document.getElementById(id);
-const fmt = n => n.toLocaleString("ru-RU").replace(/,/g," ") + " so'm";
+const fmt = n => n.toLocaleString("ru-RU").replace(/[\s,]/g," ") + " " + L.som;
 const pad = n => String(n).padStart(2,"0");
 const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const parseIso = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
 const human = s => { const d = parseIso(s); return d.getDate()+" "+MONTHS[d.getMonth()].slice(0,3).toLowerCase(); };
+const haptic = t => { try { t==="sel" ? tg.HapticFeedback.selectionChanged() : tg.HapticFeedback.notificationOccurred(t); } catch(e){} };
+const imgTag = (p, cls="") => `<img class="${cls}" src="${p.img}" alt="" onerror="this.outerHTML='<span class=&quot;ph&quot;>${p.emoji}</span>'">`;
 
-// Band kunlar bot tomonidan URL orqali uzatiladi: ?ps5=2026-11-20,2026-11-21&pult=...
-const params = new URLSearchParams(location.search);
+// Band kunlar bot tomonidan URL orqali keladi: ?ps5=2026-11-20,2026-11-21&pult=...&lang=uz
 const booked = {};
 CONFIG.products.forEach(p => booked[p.id] = new Set((params.get(p.id) || "").split(",").filter(Boolean)));
-if (!inTelegram && !location.search) { // brauzerda ko'rish uchun namunaviy band kunlar
+if (!inTelegram && !params.get("ps5") && !params.get("pult")) { // brauzerda ko'rish uchun namunaviy band kunlar
   const t = new Date(); [2,3,7].forEach(k => { const d = new Date(t); d.setDate(t.getDate()+k); booked.ps5.add(iso(d)); });
 }
 
 const today = new Date(); today.setHours(0,0,0,0);
 const state = { product: CONFIG.products[0].id, start: null, end: null, view: new Date(today.getFullYear(), today.getMonth(), 1), delivery: "pickup" };
+const cur = () => CONFIG.products.find(x => x.id === state.product);
 
-function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none",2500); if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("warning"); }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600); haptic("warning"); }
+
+function renderHero(){
+  const p = cur();
+  $("heroMedia").innerHTML = imgTag(p);
+  $("heroTitle").textContent = p.name[LANG];
+  $("heroSub").textContent = p.sub[LANG];
+  $("heroPrice").textContent = fmt(p.price);
+  $("heroChips").innerHTML = p.chips[LANG].map(c => `<span class="chip">${c}</span>`).join("");
+  const busyToday = booked[p.id].has(iso(today));
+  $("badge").textContent = busyToday ? L.busyToday : L.freeToday;
+  $("badge").classList.toggle("busy", busyToday);
+}
 
 function renderProducts(){
   $("products").innerHTML = CONFIG.products.map(p => `
-    <div class="product ${p.id===state.product?"active":""}" data-id="${p.id}">
-      <div class="emoji">${p.emoji}</div>
-      <div class="name">${p.name}</div>
-      <div class="desc">${p.desc}</div>
-      <div class="price">${fmt(p.price)} <small>/ kun</small></div>
+    <div class="tab ${p.id===state.product?"active":""}" data-id="${p.id}">
+      <div class="thumb">${imgTag(p)}</div>
+      <div><div class="t-name">${p.short[LANG]}</div><div class="t-price">${fmt(p.price)}</div></div>
     </div>`).join("");
-  document.querySelectorAll(".product").forEach(el => el.onclick = () => {
-    state.product = el.dataset.id; state.start = state.end = null;
-    if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-    renderAll();
+  document.querySelectorAll(".tab").forEach(el => el.onclick = () => {
+    if (state.product === el.dataset.id) return;
+    state.product = el.dataset.id; state.start = state.end = null; haptic("sel"); renderAll();
   });
-  $("addonsBox").style.display = state.product === "ps5" ? "" : "none";
+  const showAddon = state.product === "ps5";
+  $("addonsBox").style.display = showAddon ? "" : "none";
+  $("formStep").textContent = showAddon ? 3 : 2;
+  $("sumStep").textContent = showAddon ? 4 : 3;
 }
 
 function selectedDates(){
@@ -214,79 +378,107 @@ function renderCalendar(){
 }
 
 function pickDay(s){
-  if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+  haptic("sel");
   if (!state.start || state.end) { state.start = s; state.end = null; }
   else if (s === state.start) { state.end = s; }
   else {
     let a = state.start, b = s; if (b < a) [a,b] = [b,a];
     state.start = a; state.end = b;
     const range = selectedDates();
-    if (range.some(d => booked[state.product].has(d))) { toast("Oraliqda band kun bor — boshqa sanalarni tanlang"); state.start = s; state.end = null; }
-    else if (range.length > CONFIG.maxDays) { toast(`Ko'pi bilan ${CONFIG.maxDays} kunga olish mumkin`); state.start = s; state.end = null; }
+    if (range.some(d => booked[state.product].has(d))) { toast(L.eRange); state.start = s; state.end = null; }
+    else if (range.length > CONFIG.maxDays) { toast(L.eMax.replace("{n}", CONFIG.maxDays)); state.start = s; state.end = null; }
   }
-  renderAll();
+  renderCalendar(); renderSummary();
 }
 
 function calc(){
-  const p = CONFIG.products.find(x => x.id===state.product);
+  const p = cur();
   const days = state.end ? selectedDates().length : 0;
   const extra = state.product==="ps5" && $("extraPult").checked;
   const addon = extra ? CONFIG.extraPultPrice*days : 0;
   const deliv = state.delivery==="delivery" ? CONFIG.deliveryPrice : 0;
-  return { p, days, extra, addon, deliv, total: p.price*days + addon + deliv };
+  return { p, days, extra, addon, total: p.price*days + addon + deliv };
 }
 
 function renderSummary(){
   const c = calc();
-  $("sProduct").textContent = c.p.name;
+  $("sProduct").textContent = c.p.name[LANG];
   $("sDates").textContent = !state.start ? "—" : (state.end ? (state.start===state.end ? human(state.start) : human(state.start)+" → "+human(state.end)) : human(state.start)+" → ?");
-  $("sDays").textContent = c.days;
+  $("sDays").textContent = c.days + " " + L.days;
   $("sAddonRow").style.display = c.extra ? "" : "none"; $("sAddon").textContent = fmt(c.addon);
   $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
-  $("sDelivery").textContent = CONFIG.deliveryPrice ? fmt(CONFIG.deliveryPrice) : "kelishiladi";
+  $("sDelivery").textContent = CONFIG.deliveryPrice ? fmt(CONFIG.deliveryPrice) : L.negotiable;
   $("sTotal").textContent = fmt(c.total);
-  const label = c.days ? `Buyurtma berish • ${fmt(c.total)}` : "Kunlarni tanlang";
+  const label = c.days ? `${L.btnOrder}  •  ${fmt(c.total)}` : (state.start ? L.btnEnd : L.btnPick);
   if (inTelegram) {
     tg.MainButton.setText(label);
-    c.days ? tg.MainButton.enable() : tg.MainButton.disable();
-    tg.MainButton.color = c.days ? (tg.themeParams.button_color || "#2f6bff") : "#3a4252";
+    if (c.days) { tg.MainButton.enable(); tg.MainButton.color = "#3d7bff"; tg.MainButton.textColor = "#ffffff"; }
+    else { tg.MainButton.disable(); tg.MainButton.color = "#1e2333"; tg.MainButton.textColor = "#6b7488"; }
     tg.MainButton.show();
-  } else { const b=$("fallbackBtn"); b.style.display="block"; b.textContent=label; b.disabled=!c.days; }
+  } else { $("bar").style.display="block"; $("fallbackBtn").textContent=label; $("fallbackBtn").disabled=!c.days; }
 }
 
-function renderAll(){ renderProducts(); renderCalendar(); renderSummary(); }
+function renderAll(){ renderHero(); renderProducts(); renderCalendar(); renderSummary(); }
 
 function submit(){
   const c = calc();
   const name = $("name").value.trim(), phone = $("phone").value.trim(), address = $("address").value.trim();
-  if (!c.days) return toast("Avval kunlarni tanlang");
-  if (name.length < 2) { $("name").focus(); return toast("Ismingizni yozing"); }
-  if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast("Telefon raqamni to'g'ri yozing"); }
-  if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast("Manzilni yozing"); }
+  if (!c.days) return toast(L.eDays);
+  if (name.length < 2) { $("name").focus(); return toast(L.eName); }
+  if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast(L.ePhone); }
+  if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast(L.eAddr); }
+  haptic("success");
   const order = {
-    product: c.p.id, start: state.start, end: state.end, days: c.days,
+    lang: LANG, product: c.p.id, start: state.start, end: state.end, days: c.days,
     extra_pult: c.extra, delivery: state.delivery, address,
     name, phone, comment: $("comment").value.trim().slice(0,300), total: c.total
   };
-  if (inTelegram) tg.sendData(JSON.stringify(order));   // bot ga yuboriladi, oyna o'zi yopiladi
+  if (inTelegram) tg.sendData(JSON.stringify(order));
   else alert("Brauzerda sinov rejimi. Telegram ichida bu buyurtma botga yuboriladi:\n\n" + JSON.stringify(order, null, 2));
 }
 
-// Hodisalar
+// ---------- hodisalar ----------
 $("prev").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()-1, 1); renderCalendar(); };
 $("next").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()+1, 1); renderCalendar(); };
-$("extraPult").onchange = renderSummary;
+$("extraPult").onchange = () => { haptic("sel"); renderSummary(); };
 $("addonPrice").textContent = fmt(CONFIG.extraPultPrice);
-$("rules").innerHTML = CONFIG.rules;
+$("addonThumb").innerHTML = imgTag(CONFIG.products.find(p=>p.id==="pult"));
+$("rules").innerHTML = L.rules;
+document.querySelectorAll("[data-i]").forEach(el => { if (L[el.dataset.i] !== undefined) el.textContent = L[el.dataset.i]; });
+document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = L[el.dataset.ph]);
 document.querySelectorAll("#deliverySeg button").forEach(b => b.onclick = () => {
+  haptic("sel");
   document.querySelectorAll("#deliverySeg button").forEach(x => x.classList.toggle("active", x===b));
   state.delivery = b.dataset.v; $("addressBox").style.display = state.delivery==="delivery" ? "" : "none"; renderSummary();
 });
 $("fallbackBtn").onclick = submit;
 
+// Telefon: Telegram raqamini bir bosishda olish
+const shareBtn = $("shareBtn");
+shareBtn.textContent = L.share;
+if (inTelegram && typeof tg.requestContact === "function") {
+  shareBtn.style.display = "flex";
+  shareBtn.onclick = () => {
+    haptic("sel");
+    tg.requestContact((ok, res) => {
+      const c = res && res.responseUnsafe && res.responseUnsafe.contact;
+      if (ok && c && c.phone_number) {
+        const ph = String(c.phone_number);
+        $("phone").value = ph.startsWith("+") ? ph : "+" + ph;
+        if (!$("name").value.trim()) $("name").value = [c.first_name, c.last_name].filter(Boolean).join(" ");
+        shareBtn.textContent = L.shared; shareBtn.classList.add("done"); haptic("success");
+      } else if (ok) {
+        shareBtn.textContent = L.shared; shareBtn.classList.add("done");
+      }
+    });
+  };
+}
+// Kanal: Telegram ichida to'g'ridan-to'g'ri ochish
+$("channelCard").onclick = (e) => { if (inTelegram && tg.openTelegramLink) { e.preventDefault(); tg.openTelegramLink("https://t.me/ps_5_gta_6"); } };
+
 if (inTelegram) {
   tg.ready(); tg.expand();
-  try { tg.setHeaderColor("#0e1116"); tg.setBackgroundColor("#0e1116"); } catch(e){}
+  try { tg.setHeaderColor("#07080d"); tg.setBackgroundColor("#07080d"); tg.setBottomBarColor && tg.setBottomBarColor("#07080d"); } catch(e){}
   tg.MainButton.onClick(submit);
   const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (u) $("name").value = [u.first_name, u.last_name].filter(Boolean).join(" ");
