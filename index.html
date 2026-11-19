@@ -38,7 +38,6 @@
   .photo{position:relative;height:300px;background:linear-gradient(180deg,#dcdeeb 0%,#e3e5f2 60%,#e8eaf6 100%);display:grid;place-items:center;overflow:hidden}
   .photo::after{display:none;content:"";position:absolute;left:15%;right:15%;bottom:16px;height:18px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);filter:blur(2px)}
   .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%}
-  .photo svg.padov{position:absolute;inset:0;width:100%;height:100%;max-width:none;filter:none;z-index:1;pointer-events:none}
   .photo svg{width:76%;max-width:310px;filter:drop-shadow(0 26px 26px rgba(8,22,60,.40))}
   .pill{position:absolute;top:14px;left:14px;z-index:2;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:7px 11px;border-radius:999px;background:#fff;color:#16181d;box-shadow:0 4px 14px rgba(0,0,0,.08)}
   .pill i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(34,195,142,.2)}
@@ -276,7 +275,7 @@
    O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
 const DEFAULTS = { wd: 280000, we: 300000, sp: "2026-11-23:300000,2026-11-24:300000,2026-11-25:300000",
   open: "2026-11-23T20:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-25T20:00",
-  monthsAhead: 12, photo: "ps5_blue.webp", hours: [18,19,20],
+  monthsAhead: 12, photo: "ps5_hd.jpg", hours: [18,19,20],
   blocked: ["2026-11-23"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
 /* ========================================================== */
 
@@ -324,52 +323,6 @@ const I18N = {
         eRange:"Booked days in range — pick another date", eDays:"Pick your dates first", eName:"Enter your full name", ePhone:"Enter a valid phone number", eAddr:"Enter your address",
         months:["January","February","March","April","May","June","July","August","September","October","November","December"], dow:["Mo","Tu","We","Th","Fr","Sa","Su"] },
 };
-
-/* Fotodagi eski pult o'rniga — vektor (har qanday ekranda tiniq) ko'k DualSense. Koordinatalar fotoning 1000x1055 o'lchamida. */
-const PAD4K = `<svg class="padov" viewBox="0 0 1000 1055" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
- <defs>
-  <linearGradient id="bgP" x1="0" y1="690" x2="0" y2="1055" gradientUnits="userSpaceOnUse">
-   <stop offset="0" stop-color="#c8c9d5"/><stop offset=".11" stop-color="#ced0dd"/><stop offset=".247" stop-color="#dbddea"/><stop offset=".384" stop-color="#e5e7f4"/><stop offset=".521" stop-color="#e8eaf7"/><stop offset=".589" stop-color="#e3e5f1"/><stop offset=".658" stop-color="#dfe1ed"/><stop offset=".726" stop-color="#dadbe8"/><stop offset=".795" stop-color="#dcdeeb"/><stop offset=".863" stop-color="#e6e8f5"/><stop offset="1" stop-color="#eceefb"/>
-  </linearGradient>
-  <filter id="fb6"><feGaussianBlur stdDeviation="6"/></filter>
-  <filter id="fb10" x="-30%" y="-200%" width="160%" height="500%"><feGaussianBlur stdDeviation="10"/></filter>
-  <filter id="fb3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
-  <mask id="mP" maskUnits="userSpaceOnUse" x="60" y="660" width="480" height="420"><rect x="100" y="698" width="402" height="380" fill="#fff" filter="url(#fb6)"/></mask>
-  <linearGradient id="dsBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d7bff"/><stop offset=".42" stop-color="#1546ea"/><stop offset="1" stop-color="#0a24a0"/></linearGradient>
-  <linearGradient id="dsSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset=".18" stop-color="#000" stop-opacity="0"/><stop offset=".82" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>
-  <linearGradient id="dsPad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a92ff"/><stop offset="1" stop-color="#1e54f0"/></linearGradient>
-  <linearGradient id="dsCore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1e27"/><stop offset="1" stop-color="#06070b"/></linearGradient>
-  <radialGradient id="dsStick" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#454b5a"/><stop offset="1" stop-color="#0b0d12"/></radialGradient>
- </defs>
- <rect x="60" y="660" width="480" height="420" fill="url(#bgP)" mask="url(#mP)"/>
- <g transform="translate(92 678) scale(1.1)">
-  <ellipse cx="190" cy="252" rx="160" ry="9" fill="#0b1440" opacity=".35" filter="url(#fb10)"/>
-  <ellipse cx="190" cy="266" rx="140" ry="7" fill="#1d4fff" opacity=".14" filter="url(#fb10)"/>
-  <rect x="66" y="12" width="62" height="18" rx="8" fill="#0c1d66"/><rect x="252" y="12" width="62" height="18" rx="8" fill="#0c1d66"/>
-  <path d="M95 22C70 22 52 34 44 60L14 190C6 224 22 252 52 252C72 252 84 240 96 218L118 178C126 166 136 160 150 160H230C244 160 254 166 262 178L284 218C296 240 308 252 328 252C358 252 374 224 366 190L336 60C328 34 310 22 285 22Z" fill="url(#dsBody)" stroke="#0a1d78" stroke-width="1.4"/>
-  <path d="M95 22C70 22 52 34 44 60L14 190C6 224 22 252 52 252C72 252 84 240 96 218L118 178C126 166 136 160 150 160H230C244 160 254 166 262 178L284 218C296 240 308 252 328 252C358 252 374 224 366 190L336 60C328 34 310 22 285 22Z" fill="url(#dsSide)"/>
-  <path d="M98 25C76 25 60 36 52 58" stroke="#fff" stroke-opacity=".45" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-  <path d="M282 25C304 25 320 36 328 58" stroke="#fff" stroke-opacity=".3" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-  <ellipse cx="96" cy="70" rx="44" ry="14" fill="#fff" opacity=".09" transform="rotate(-14 96 70)"/>
-  <path d="M116 100H264C280 100 291 111 295 127L302 160C296 168 288 172 280 170L262 164C254 160 244 158 230 158H150C136 158 126 160 118 164L100 170C92 172 84 168 78 160L85 127C89 111 100 100 116 100Z" fill="url(#dsCore)"/>
-  <path d="M126 24H254L247 94Q245 104 235 104H145Q135 104 133 94Z" fill="url(#dsPad)" stroke="#fff" stroke-opacity=".28" stroke-width="1"/>
-  <path d="M136 28H244" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/>
-  <g stroke="#7fc0ff" stroke-width="3.5" stroke-linecap="round"><path d="M122 30L130 98" filter="url(#fb3)"/><path d="M258 30L250 98" filter="url(#fb3)"/></g>
-  <g stroke="#cfe6ff" stroke-width="1.6" stroke-linecap="round"><path d="M122 30L130 98"/><path d="M258 30L250 98"/></g>
-  <rect x="109" y="40" width="6" height="15" rx="3" fill="#0b1f73"/><rect x="265" y="40" width="6" height="15" rx="3" fill="#0b1f73"/>
-  <g fill="#0d2a9e" stroke="#fff" stroke-opacity=".22" stroke-width="1">
-   <path d="M72 70h12v12l-6 6-6-6z"/><path d="M72 114h12v-12l-6-6-6 6z"/><path d="M56 86v12h12l6-6-6-6z"/><path d="M100 86v12H88l-6-6 6-6z"/>
-   <circle cx="302" cy="70" r="10.5"/><circle cx="302" cy="114" r="10.5"/><circle cx="280" cy="92" r="10.5"/><circle cx="324" cy="92" r="10.5"/>
-  </g>
-  <g fill="none" stroke="#a9ccff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
-   <path d="M297 74L302 65L307 74Z"/><circle cx="324" cy="92" r="4.6"/><path d="M297.5 109.5l9 9M306.5 109.5l-9 9"/><rect x="275.6" y="87.6" width="8.8" height="8.8"/>
-  </g>
-  <g fill="#3a3f4c"><circle cx="184" cy="114" r="1.6"/><circle cx="190" cy="114" r="1.6"/><circle cx="196" cy="114" r="1.6"/></g>
-  <circle cx="150" cy="135" r="26" fill="#030406"/><circle cx="150" cy="135" r="21" fill="url(#dsStick)"/><circle cx="150" cy="135" r="12" fill="#1b1f2b" stroke="#fff" stroke-opacity=".08"/>
-  <circle cx="230" cy="135" r="26" fill="#030406"/><circle cx="230" cy="135" r="21" fill="url(#dsStick)"/><circle cx="230" cy="135" r="12" fill="#1b1f2b" stroke="#fff" stroke-opacity=".08"/>
-  <circle cx="190" cy="137" r="7" fill="#0f1115" stroke="#2c313d"/><path d="M187.5 140.5v-7h3a2 2 0 0 1 0 4h-3" stroke="#6b7387" stroke-width="1.1" fill="none"/>
- </g>
-</svg>`;
 
 /* Umumiy geympad illyustratsiyasi (o'z suratingiz bo'lmasa ko'rinadi) */
 const PAD_SVG = `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
@@ -467,7 +420,7 @@ function renderStatic(){
   document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = L[el.dataset.ph]);
   document.querySelectorAll("[data-html]").forEach(el => el.innerHTML = L[el.dataset.html]);
   const img = new Image(); img.alt = "";
-  img.onload = () => { $("photo").appendChild(img); $("photo").insertAdjacentHTML("beforeend", PAD4K); };
+  img.onload = () => $("photo").appendChild(img);
   img.onerror = () => $("photo").insertAdjacentHTML("beforeend", PAD_SVG);
   if (DEFAULTS.photo) img.src = DEFAULTS.photo; else img.onerror();
   const futureSp = Object.keys(SPECIAL).filter(d => d >= TODAY).sort();
