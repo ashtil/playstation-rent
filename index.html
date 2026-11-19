@@ -423,7 +423,7 @@ function renderStatic(){
   img.onload = () => $("photo").appendChild(img);
   img.onerror = () => $("photo").insertAdjacentHTML("beforeend", PAD_SVG);
   if (DEFAULTS.photo) img.src = DEFAULTS.photo; else img.onerror();
-  const futureSp = Object.keys(SPECIAL).filter(d => d >= TODAY).sort();
+  const futureSp = Object.keys(SPECIAL).filter(d => d >= TODAY && !booked.has(d)).sort();
   let rates = `<div class="rate"><small>${L.wd}</small><b>${fmt(WD)} <em>${L.perDay}</em></b></div>
                <div class="rate we"><small>${L.we}</small><b>${fmt(WE)} <em>${L.perDay}</em></b></div>`;
   if (futureSp.length) {
@@ -436,7 +436,7 @@ function renderStatic(){
   $("pillTxt").textContent = firstFree ? L.freeNow : L.noFree;
   $("pill").classList.toggle("busy", !firstFree);
   const ws = OPENS.filter(w => w.to > TODAY);
-  if (ws.length || HOURS.length < 16) {
+  if (false) {  // yashil "Bo'sh vaqt" yozuvi o'chirilgan
     $("avail").style.display = "flex";
     $("availTxt").innerHTML = ws.length ? ws.map(w => `${human(w.from)} ${w.fromT}  →  ${human(w.to)} ${w.toT}`).join("<br>") : L.eveOnly;
     $("availHrs").textContent = L.hrsLbl + hoursText();
