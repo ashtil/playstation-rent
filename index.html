@@ -6,158 +6,166 @@
 <title>PlayRent — PS5 ijarasi</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#07080d; --surface:#10131c; --surface2:#171b27; --surface3:#1e2333;
-    --text:#f5f7fb; --muted:#8a93a8; --dim:#4b5366; --line:rgba(255,255,255,.07);
-    --blue:#3d7bff; --cyan:#3fd0ff; --violet:#8b5cff; --ok:#2dd4a0; --bad:#ff5a6a;
-    --grad:linear-gradient(135deg,#3d7bff 0%,#8b5cff 100%);
-    --r:20px;
+    --bg:#0b0d12; --card:#151922; --card2:#1c212c; --card3:#252b38; --line:rgba(255,255,255,.07);
+    --text:#f4f6fa; --muted:#8c95a8; --dim:#4c5467;
+    --blue:#2f8cff; --blue2:#1f6fe0; --ok:#22c38e; --bad:#ff4d5e; --gold:#ffb547;
+    --light:#f2f3f7;
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0}
-  html{background:var(--bg)}
-  body{color:var(--text);font:15px/1.45 "Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(120px + env(safe-area-inset-bottom));
-       background:radial-gradient(900px 500px at 85% -10%,rgba(139,92,255,.22),transparent 60%),radial-gradient(700px 500px at -10% 10%,rgba(61,123,255,.20),transparent 60%),var(--bg);min-height:100vh}
+  *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg)}
+  body{color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(110px + env(safe-area-inset-bottom))}
   button{font-family:inherit}
+  .wrap{padding:0 16px}
 
-  /* ---------- top bar ---------- */
-  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 6px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em}
-  .logo{width:34px;height:34px;border-radius:11px;background:var(--grad);display:grid;place-items:center;box-shadow:0 6px 20px rgba(61,123,255,.45)}
-  .logo svg{width:18px;height:18px}
-  .city{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+  /* header */
+  .head{padding:18px 16px 4px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .head h1{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+  .head h1 span{color:var(--blue)}
+  .head p{color:var(--muted);font-size:13.5px;margin-top:4px}
+  .chbtn{flex:none;display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none}
 
-  /* ---------- hero ---------- */
-  .hero{margin:12px 16px 0;border-radius:28px;position:relative;overflow:hidden;background:linear-gradient(160deg,#151a2b 0%,#0c0f18 100%);border:1px solid var(--line)}
-  .hero-media{height:230px;position:relative;display:grid;place-items:center;overflow:hidden}
-  .hero-media::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(61,123,255,.55),rgba(139,92,255,.15) 55%,transparent 70%);filter:blur(10px)}
-  .hero-media img{position:relative;max-width:88%;max-height:210px;object-fit:contain;filter:drop-shadow(0 25px 35px rgba(0,0,0,.6));transition:opacity .25s}
-  .hero-media .ph{position:relative;font-size:88px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.6))}
-  .badge{position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:rgba(45,212,160,.14);color:var(--ok);border:1px solid rgba(45,212,160,.3);z-index:2}
-  .badge.busy{background:rgba(255,90,106,.12);color:var(--bad);border-color:rgba(255,90,106,.3)}
-  .hero-body{padding:4px 20px 20px}
-  .hero-title{font-size:26px;font-weight:800;letter-spacing:-.03em}
-  .hero-sub{color:var(--muted);font-size:14px;margin-top:2px}
-  .hero-price{display:flex;align-items:baseline;gap:6px;margin-top:12px}
-  .hero-price b{font-size:28px;font-weight:800;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero-price span{color:var(--muted);font-size:14px}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-  .chip{font-size:12px;font-weight:600;color:#c9d1e3;background:rgba(255,255,255,.05);border:1px solid var(--line);padding:6px 10px;border-radius:10px}
+  /* product card (light photo area like a store) */
+  .product{margin:14px 16px 0;border-radius:24px;overflow:hidden;background:var(--card);border:1px solid var(--line)}
+  .photo{position:relative;height:250px;background:radial-gradient(120% 90% at 50% 35%,#ffffff 0%,#eceef3 60%,#dfe2ea 100%);display:grid;place-items:center;overflow:hidden}
+  .photo img{max-width:86%;max-height:220px;object-fit:contain;filter:drop-shadow(0 22px 26px rgba(20,25,40,.28))}
+  .photo svg{width:78%;max-width:320px;filter:drop-shadow(0 24px 28px rgba(20,25,40,.30))}
+  .pill{position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:7px 11px;border-radius:999px;background:#fff;color:#16181d;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .pill i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(34,195,142,.2)}
+  .pill.busy i{background:var(--bad);box-shadow:0 0 0 3px rgba(255,77,94,.2)}
+  .tag{position:absolute;top:14px;right:14px;font-size:11px;font-weight:800;letter-spacing:.04em;padding:6px 10px;border-radius:8px;background:#16181d;color:#fff}
+  .pbody{padding:16px 18px 18px}
+  .pbody h2{font-size:21px;font-weight:800;letter-spacing:-.02em}
+  .pbody .sub{color:var(--muted);font-size:13.5px;margin-top:2px}
+  .rates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+  .rate{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:11px 12px}
+  .rate small{display:block;color:var(--muted);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .rate b{display:block;font-size:15.5px;font-weight:800;margin-top:3px;letter-spacing:-.02em;white-space:nowrap}
+  .rate b em{font-style:normal;color:var(--muted);font-size:12px;font-weight:600}
+  .rate.we b{color:var(--gold)}
+  .rate.sp{grid-column:1/-1;background:linear-gradient(135deg,rgba(47,140,255,.16),rgba(47,140,255,.06));border-color:rgba(47,140,255,.35)}
+  .rate.sp b{color:var(--blue)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{font-size:12px;font-weight:600;color:#c7cedb;background:var(--card2);border:1px solid var(--line);padding:6px 10px;border-radius:10px}
 
-  /* ---------- product tabs ---------- */
-  .tabs{display:flex;gap:8px;margin:14px 16px 0;overflow-x:auto;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{flex:1;min-width:130px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);cursor:pointer;transition:.2s}
-  .tab.active{border-color:transparent;background:linear-gradient(var(--surface2),var(--surface2)) padding-box,var(--grad) border-box}
-  .tab .thumb{width:40px;height:40px;border-radius:12px;background:var(--surface3);display:grid;place-items:center;overflow:hidden;flex:none;font-size:20px}
-  .tab .thumb img{width:100%;height:100%;object-fit:cover}
-  .tab .t-name{font-weight:700;font-size:13px}
-  .tab .t-price{font-size:12px;color:var(--muted)}
+  /* availability */
+  .avail{margin:12px 16px 0;display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:16px;background:rgba(34,195,142,.08);border:1px solid rgba(34,195,142,.28)}
+  .avail .ic{width:36px;height:36px;border-radius:11px;background:rgba(34,195,142,.16);display:grid;place-items:center;font-size:17px;flex:none}
+  .avail small{display:block;color:var(--muted);font-size:12px}
+  .avail b{font-size:14.5px}
 
-  /* ---------- sections ---------- */
-  .section{margin:22px 16px 0}
-  .step{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .step .n{width:24px;height:24px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--cyan)}
-  .step h2{font-size:17px;font-weight:800;letter-spacing:-.02em}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+  /* sections */
+  .sec{margin:22px 16px 0}
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .sec-h h3{font-size:17px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  .sec-h h3 .n{width:22px;height:22px;border-radius:7px;background:var(--blue);color:#fff;font-size:12px;display:grid;place-items:center}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}
 
-  /* ---------- calendar ---------- */
-  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  /* calendar */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .cal-head b{font-size:16px;font-weight:800}
-  .nav{background:var(--surface2);border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:12px;font-size:18px;cursor:pointer;display:grid;place-items:center}
+  .nav{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:18px;cursor:pointer}
   .nav:disabled{opacity:.25}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}
-  .dow{font-size:11px;font-weight:700;color:var(--dim);padding:2px 0 6px;text-transform:uppercase}
-  .day{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;position:relative;transition:background .15s,transform .1s}
-  .day:active{transform:scale(.92)}
-  .day.free{background:var(--surface2);color:var(--text)}
-  .day.past{color:#2f3545;cursor:default}
-  .day.booked{background:repeating-linear-gradient(135deg,rgba(255,90,106,.12) 0 6px,rgba(255,90,106,.05) 6px 12px);color:rgba(255,90,106,.75);cursor:not-allowed}
-  .day.sel{background:var(--grad);color:#fff;box-shadow:0 6px 18px rgba(61,123,255,.45)}
-  .day.inrange{background:rgba(61,123,255,.22);color:#fff}
-  .day.today::after{content:"";position:absolute;bottom:6px;width:4px;height:4px;border-radius:50%;background:var(--cyan)}
-  .day.sel.today::after{background:#fff}
-  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:14px;flex-wrap:wrap}
-  .legend i{display:inline-block;width:10px;height:10px;border-radius:4px;margin-right:6px;vertical-align:-1px}
-  .hint{font-size:13px;color:var(--muted);margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .dow{text-align:center;font-size:11px;font-weight:700;color:var(--dim);padding:2px 0 6px;text-transform:uppercase}
+  .dow.we{color:#8a6a35}
+  .day{position:relative;height:50px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14.5px;cursor:pointer;transition:transform .1s,background .15s}
+  .day:active{transform:scale(.93)}
+  .day .pr{font-size:9.5px;font-weight:600;color:var(--muted);margin-top:1px;letter-spacing:-.01em}
+  .day.free{background:var(--card2)}
+  .day.free.wkend .pr{color:var(--gold)}
+  .day.free.spc .pr{color:var(--blue)}
+  .day.past{color:#2c3240;cursor:default}
+  .day.busy{background:rgba(255,77,94,.10);color:rgba(255,77,94,.55);cursor:not-allowed}
+  .day.busy::after{content:"";position:absolute;inset:9px 11px;background:
+      linear-gradient(45deg,transparent calc(50% - 1px),rgba(255,77,94,.85) calc(50% - 1px),rgba(255,77,94,.85) calc(50% + 1px),transparent calc(50% + 1px)),
+      linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,77,94,.85) calc(50% - 1px),rgba(255,77,94,.85) calc(50% + 1px),transparent calc(50% + 1px))}
+  .day.busy .pr{display:none}
+  .day.ret{background:var(--card2);color:var(--text);outline:1.5px dashed rgba(47,140,255,.6);outline-offset:-2px}
+  .day.ret::after{display:none}
+  .day.ret .pr{display:block;color:var(--blue)}
+  .day.inr{background:rgba(47,140,255,.22);color:#fff}
+  .day.inr .pr{color:#cfe2ff}
+  .day.sel{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(47,140,255,.4)}
+  .day.sel .pr{color:#e6f0ff}
+  .day.today::before{content:"";position:absolute;top:5px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--blue)}
+  .day.sel.today::before{background:#fff}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:11.5px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:10px}
 
-  /* ---------- addon ---------- */
-  .addon{display:flex;align-items:center;gap:12px;cursor:pointer}
-  .addon .thumb{width:48px;height:48px;border-radius:14px;background:var(--surface2);display:grid;place-items:center;overflow:hidden;font-size:22px;flex:none}
-  .addon .thumb img{width:100%;height:100%;object-fit:cover}
-  .addon .txt{flex:1}
-  .addon .txt b{display:block;font-size:15px}
-  .addon .txt small{color:var(--muted);font-size:13px}
-  .switch{width:50px;height:30px;border-radius:999px;background:var(--surface3);position:relative;transition:.2s;flex:none}
-  .switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
-  .addon input{display:none}
-  .addon input:checked + .switch{background:var(--grad)}
-  .addon input:checked + .switch::after{left:23px}
-
-  /* ---------- form ---------- */
+  /* form */
   .field{position:relative;margin-bottom:10px}
   .field svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
-  .field.ta svg{top:20px;transform:none}
-  .field input,.field textarea{width:100%;background:var(--surface2);border:1.5px solid transparent;color:var(--text);border-radius:14px;padding:14px 14px 14px 44px;font-size:15px;outline:none;font-family:inherit;transition:.15s}
+  .field.ta svg{top:19px;transform:none}
+  .field input,.field textarea{width:100%;background:var(--card);border:1.5px solid var(--line);color:var(--text);border-radius:14px;padding:14px 14px 14px 44px;font-size:15px;outline:none;font-family:inherit}
   .field textarea{resize:none}
   .field input::placeholder,.field textarea::placeholder{color:var(--dim)}
-  .field input:focus,.field textarea:focus{border-color:var(--blue);background:var(--surface3)}
-  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-radius:14px;padding:4px;gap:4px;margin-bottom:10px}
-  .seg button{border:0;background:transparent;color:var(--muted);padding:11px 6px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-  .seg button.active{background:var(--surface3);color:var(--text);box-shadow:0 2px 10px rgba(0,0,0,.35)}
+  .field input:focus,.field textarea:focus{border-color:var(--blue)}
+  .share{width:100%;display:none;align-items:center;justify-content:center;gap:8px;margin:-2px 0 10px;padding:12px;border-radius:14px;border:1.5px dashed rgba(47,140,255,.5);background:rgba(47,140,255,.08);color:var(--blue);font-size:14px;font-weight:700;cursor:pointer}
+  .share.done{border-style:solid;border-color:rgba(34,195,142,.4);background:rgba(34,195,142,.1);color:var(--ok)}
+  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;margin-bottom:10px}
+  .seg button{border:0;background:transparent;color:var(--muted);padding:11px 6px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer}
+  .seg button.active{background:var(--blue);color:#fff}
 
-  .share{width:100%;display:none;align-items:center;justify-content:center;gap:8px;margin:-2px 0 10px;padding:12px;border-radius:14px;border:1.5px dashed rgba(63,208,255,.45);background:rgba(63,208,255,.08);color:var(--cyan);font-size:14px;font-weight:700;cursor:pointer}
-  .share.done{border-style:solid;border-color:rgba(45,212,160,.4);background:rgba(45,212,160,.1);color:var(--ok)}
-  .channel{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(61,123,255,.15),rgba(139,92,255,.15));border:1px solid rgba(139,92,255,.3);cursor:pointer;text-decoration:none;color:var(--text)}
-  .channel .ic{width:42px;height:42px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-size:20px;flex:none}
-  .channel b{display:block;font-size:14px}.channel small{color:var(--muted);font-size:12px}
-  .channel .go{margin-left:auto;color:var(--cyan);font-size:20px}
-  /* ---------- summary ---------- */
-  .row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;color:var(--muted);font-size:14px}
+  /* summary */
+  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0;color:var(--muted);font-size:14px}
   .row b{color:var(--text);font-weight:700;text-align:right}
-  .total{border-top:1px dashed rgba(255,255,255,.12);margin-top:8px;padding-top:14px}
+  .calc{margin:8px 0 2px;padding:10px 12px;border-radius:12px;background:var(--card2);font-size:13px;color:#c7cedb;font-variant-numeric:tabular-nums}
+  .calc div{display:flex;justify-content:space-between;padding:3px 0}
+  .calc div span:last-child{font-weight:700;color:var(--text)}
+  .total{border-top:1px dashed rgba(255,255,255,.12);margin-top:8px;padding-top:12px}
   .total span{color:var(--text);font-weight:700;font-size:16px}
-  .total b{font-size:22px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .total b{font-size:23px;font-weight:800;color:var(--blue);letter-spacing:-.02em}
+  .channel{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;cursor:pointer}
+  .channel .ic{width:42px;height:42px;border-radius:12px;background:var(--blue);display:grid;place-items:center;font-size:19px;flex:none}
+  .channel b{display:block;font-size:14px}.channel small{color:var(--muted);font-size:12px}
+  .channel .go{margin-left:auto;color:var(--muted);font-size:22px}
   .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-  .trust div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;font-size:11px;color:var(--muted);font-weight:600}
+  .trust div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;font-size:11px;color:var(--muted);font-weight:600}
   .trust div b{display:block;font-size:18px;margin-bottom:4px}
   .rules{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7;padding:0 4px}
 
-  /* ---------- bottom bar (browser fallback) ---------- */
-  .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 60%,transparent);display:none}
-  .bar button{width:100%;padding:17px;border:0;border-radius:16px;background:var(--grad);color:#fff;font-size:16px;font-weight:800;box-shadow:0 10px 30px rgba(61,123,255,.4);cursor:pointer}
-  .bar button:disabled{background:var(--surface3);color:var(--dim);box-shadow:none}
-  .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-120%);background:rgba(30,35,51,.95);backdrop-filter:blur(10px);border:1px solid var(--line);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;z-index:9;max-width:90%;transition:transform .25s}
-  .toast{visibility:hidden}
+  .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 65%,transparent);display:none;z-index:5}
+  .bar button{width:100%;padding:17px;border:0;border-radius:16px;background:var(--blue);color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(47,140,255,.35)}
+  .bar button:disabled{background:var(--card3);color:var(--dim);box-shadow:none}
+  .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-140%);visibility:hidden;background:#1f2430;border:1px solid var(--line);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;z-index:9;max-width:90%;transition:transform .25s}
   .toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
 </style>
 </head>
 <body>
 
-<div class="top">
-  <div class="brand">
-    <div class="logo"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 6h10a5 5 0 0 1 4.9 6l-1 5a2.5 2.5 0 0 1-4.3 1.2L14.5 16h-5l-2.1 2.2A2.5 2.5 0 0 1 3.1 17l-1-5A5 5 0 0 1 7 6Zm1 3v1.5H6.5v1.5H8v1.5h1.5V12H11v-1.5H9.5V9H8Zm8 .5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm2 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg></div>
-    PlayRent
+<div class="head">
+  <div>
+    <h1>Play<span>Rent</span></h1>
+    <p data-i="tagline"></p>
   </div>
-  <div class="city" data-i="city">📍 Toshkent</div>
+  <a class="chbtn" id="chTop" href="https://t.me/ps_5_gta_6" target="_blank">📢 <span data-i="chShort"></span></a>
 </div>
 
-<div class="hero">
-  <div class="badge" id="badge">● Bugun bo'sh</div>
-  <div class="hero-media" id="heroMedia"></div>
-  <div class="hero-body">
-    <div class="hero-title" id="heroTitle"></div>
-    <div class="hero-sub" id="heroSub"></div>
-    <div class="hero-price"><b id="heroPrice"></b><span data-i="perDay">/ sutka</span></div>
-    <div class="chips" id="heroChips"></div>
+<div class="product">
+  <div class="photo" id="photo">
+    <div class="pill" id="pill"><i></i><span id="pillTxt"></span></div>
+    <div class="tag">4K · 120 FPS</div>
+  </div>
+  <div class="pbody">
+    <h2>PlayStation 5 Slim</h2>
+    <div class="sub" data-i="sub"></div>
+    <div class="rates" id="rates"></div>
+    <div class="chips" id="chips"></div>
   </div>
 </div>
 
-<div class="tabs" id="products"></div>
+<div class="avail" id="avail" style="display:none">
+  <div class="ic">🟢</div>
+  <div><small data-i="availTitle"></small><b id="availTxt"></b></div>
+</div>
 
-<div class="section">
-  <div class="step"><div class="n">1</div><h2 data-i="s1">Kunlarni tanlang</h2></div>
+<div class="sec">
+  <div class="sec-h"><h3><span class="n">1</span><span data-i="s1"></span></h3></div>
   <div class="card">
     <div class="cal-head">
       <button class="nav" id="prev">‹</button>
@@ -166,324 +174,330 @@
     </div>
     <div class="grid" id="grid"></div>
     <div class="legend">
-      <span><i style="background:var(--surface3)"></i><b data-i="lFree" style="font-weight:500">Bo'sh</b></span>
-      <span><i style="background:rgba(255,90,106,.5)"></i><b data-i="lBusy" style="font-weight:500">Band</b></span>
-      <span><i style="background:var(--grad)"></i><b data-i="lSel" style="font-weight:500">Tanlangan</b></span>
+      <span><i style="background:var(--card3)"></i><span data-i="lFree"></span></span>
+      <span><i style="background:rgba(255,77,94,.55)"></i><span data-i="lBusy"></span></span>
+      <span><i style="background:var(--blue)"></i><span data-i="lSel"></span></span>
+      <span><i style="background:var(--gold)"></i><span data-i="lWe"></span></span>
     </div>
   </div>
-  <div class="hint" id="hint" data-i="hint"></div>
+  <div class="hint" id="hint"></div>
 </div>
 
-<div class="section" id="addonsBox">
-  <div class="step"><div class="n">2</div><h2 data-i="s2">Qo'shimcha</h2></div>
-  <label class="card addon">
-    <div class="thumb" id="addonThumb"></div>
-    <div class="txt"><b data-i="addon">Uchinchi pult</b><small>+<span id="addonPrice"></span> <span data-i="perDay"></span></small></div>
-    <input type="checkbox" id="extraPult"><div class="switch"></div>
-  </label>
-</div>
-
-<div class="section">
-  <div class="step"><div class="n" id="formStep">3</div><h2 data-i="s3">Ma'lumotlaringiz</h2></div>
-  <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" placeholder="Ismingiz" autocomplete="name"></div>
+<div class="sec">
+  <div class="sec-h"><h3><span class="n">2</span><span data-i="s3"></span></h3></div>
+  <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" autocomplete="name"></div>
   <div class="field"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><input id="phone" type="tel" placeholder="+998 90 123 45 67" autocomplete="tel"></div>
   <button class="share" id="shareBtn" type="button"></button>
   <div class="seg" id="deliverySeg">
     <button data-v="pickup" class="active" data-i="pickup"></button>
     <button data-v="delivery" data-i="delivery"></button>
   </div>
-  <div class="field" id="addressBox" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12Z"/><circle cx="12" cy="10" r="3"/></svg><input id="address" data-ph="address" placeholder="Manzil: tuman, ko'cha, mo'ljal"></div>
-  <div class="field ta"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><textarea id="comment" rows="2" data-ph="comment" placeholder="Izoh: qaysi o'yinlar kerak, qaysi vaqtda…"></textarea></div>
+  <div class="field" id="addressBox" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12Z"/><circle cx="12" cy="10" r="3"/></svg><input id="address" data-ph="address"></div>
+  <div class="field ta"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><textarea id="comment" rows="2" data-ph="comment"></textarea></div>
 </div>
 
-<div class="section">
-  <div class="step"><div class="n" id="sumStep">4</div><h2 data-i="s4">Buyurtma</h2></div>
+<div class="sec">
+  <div class="sec-h"><h3><span class="n">3</span><span data-i="s4"></span></h3></div>
   <div class="card">
-    <div class="row"><span data-i="rProduct"></span><b id="sProduct">—</b></div>
-    <div class="row"><span data-i="rDates"></span><b id="sDates">—</b></div>
-    <div class="row"><span data-i="rDays"></span><b id="sDays">0 kun</b></div>
-    <div class="row" id="sAddonRow" style="display:none"><span data-i="addon"></span><b id="sAddon"></b></div>
-    <div class="row" id="sDeliveryRow" style="display:none"><span data-i="rDelivery"></span><b id="sDelivery"></b></div>
-    <div class="row total"><span data-i="rTotal"></span><b id="sTotal">0 so'm</b></div>
-  </div>
-  <div class="trust">
-    <div><b>🛡</b><span data-i="t1"></span></div>
-    <div><b>⚡</b><span data-i="t2"></span></div>
-    <div><b>🎮</b><span data-i="t3"></span></div>
+    <div class="row"><span data-i="rPick"></span><b id="sPick">—</b></div>
+    <div class="row"><span data-i="rRet"></span><b id="sRet">—</b></div>
+    <div class="row"><span data-i="rNights"></span><b id="sNights">0</b></div>
+    <div class="calc" id="calc" style="display:none"></div>
+    <div class="row" id="sDeliveryRow" style="display:none"><span data-i="rDelivery"></span><b data-i="negotiable"></b></div>
+    <div class="row total"><span data-i="rTotal"></span><b id="sTotal">0</b></div>
   </div>
   <a class="channel" id="channelCard" href="https://t.me/ps_5_gta_6" target="_blank">
     <div class="ic">📢</div>
     <div><b>@ps_5_gta_6</b><small data-i="chSub"></small></div>
     <div class="go">›</div>
   </a>
-  <div class="rules" id="rules"></div>
+  <div class="trust">
+    <div><b>🛡</b><span data-i="t1"></span></div>
+    <div><b>⚡</b><span data-i="t2"></span></div>
+    <div><b>🎮</b><span data-i="t3"></span></div>
+  </div>
+  <div class="rules" data-html="rules"></div>
 </div>
 
-<div class="bar" id="bar"><button id="fallbackBtn">Kunlarni tanlang</button></div>
+<div class="bar" id="bar"><button id="fallbackBtn"></button></div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================= SOZLAMALAR — narx, rasm, matnlarni shu yerda o'zgartiring =================
-   Rasmlar: o'zingizning PS5 va pult rasmlaringizni GitHub repoga (index.html yoniga)
-   "ps5.jpg" va "pult.jpg" nomi bilan yuklang. Rasm bo'lmasa emoji ko'rinadi.            */
-const CONFIG = {
-  products: [
-    { id: "ps5",  emoji: "🎮", img: "ps5.jpg",  price: 150000,
-      name:  { uz: "PlayStation 5 Slim", ru: "PlayStation 5 Slim", en: "PlayStation 5 Slim" },
-      short: { uz: "PS5 Slim", ru: "PS5 Slim", en: "PS5 Slim" },
-      sub:   { uz: "Konsol + 2 ta DualSense pult", ru: "Консоль + 2 геймпада DualSense", en: "Console + 2 DualSense controllers" },
-      chips: { uz: ["4K • 120 FPS", "2 ta pult", "Mashhur o'yinlar", "HDMI kabel"],
-               ru: ["4K • 120 FPS", "2 геймпада", "Топовые игры", "HDMI кабель"],
-               en: ["4K • 120 FPS", "2 controllers", "Top games", "HDMI cable"] } },
-    { id: "pult", emoji: "🕹", img: "pult.jpg", price: 50000,
-      name:  { uz: "DualSense pult", ru: "Геймпад DualSense", en: "DualSense controller" },
-      short: { uz: "Pult", ru: "Геймпад", en: "Controller" },
-      sub:   { uz: "Alohida ijaraga", ru: "Отдельная аренда", en: "Rent separately" },
-      chips: { uz: ["Simsiz", "Zaryadlangan", "Haptic feedback"],
-               ru: ["Беспроводной", "Заряжен", "Haptic feedback"],
-               en: ["Wireless", "Fully charged", "Haptic feedback"] } },
-  ],
-  extraPultPrice: 50000,
-  deliveryPrice: 0,       // 0 = "kelishiladi"
-  maxDays: 14,
-  monthsAhead: 2,
-};
-/* ============================================================================================ */
+/* ======================= SOZLAMALAR =======================
+   Narx va bo'sh vaqtni bot o'zi URL orqali yuboradi (bot.py dagi sozlamalar).
+   Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
+   O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
+const DEFAULTS = { wd: 280000, we: 350000, sp: "", open: "", monthsAhead: 12, photo: "ps5.jpg" };
+/* ========================================================== */
 
-/* ======================= TARJIMALAR ======================= */
 const I18N = {
-  uz: { city:"📍 Toshkent", share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", chSub:"Yangiliklar, chegirmalar va bo'sh kunlar",  perDay:"/ sutka", s1:"Kunlarni tanlang", s2:"Qo'shimcha", s3:"Ma'lumotlaringiz", s4:"Buyurtma",
-        lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", hint:"👆 Boshlanish kunini, keyin tugash kunini bosing. 1 kunga — o'sha kunni ikki marta.",
-        addon:"Uchinchi pult", name:"Ismingiz", address:"Manzil: tuman, ko'cha, mo'ljal", comment:"Izoh: qaysi o'yinlar kerak, qaysi vaqtda…",
-        pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish", rProduct:"Mahsulot", rDates:"Sanalar", rDays:"Muddat",
-        rDelivery:"Yetkazib berish", rTotal:"Jami", t1:"Tekshirilgan konsol", t2:"Tez tasdiqlash", t3:"O'yinlar o'rnatilgan",
-        rules:"• 1 sutka = 24 soat.<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
-        days:"kun", som:"so'm", negotiable:"kelishiladi", freeToday:"● Bugun bo'sh", busyToday:"● Bugun band",
-        btnPick:"Kunlarni tanlang", btnEnd:"Tugash kunini tanlang", btnOrder:"Buyurtma berish",
-        eRange:"Oraliqda band kun bor — boshqa sanalarni tanlang", eMax:"Ko'pi bilan {n} kunga olish mumkin", eDays:"Avval kunlarni tanlang",
-        eName:"Ismingizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
+  uz: { tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
+        wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", perDay:"/ sutka", chips:["2 ta pult","Mashhur o'yinlar","HDMI kabel","Tekshirilgan"],
+        freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Sanani tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
+        lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Dam olish kuni",
+        hint0:"👆 Olish kunini bosing", hint1:"↩️ Endi qaytarish kunini bosing (ko'k chiziqli kunlar)", hint2:"✅ Tayyor. O'zgartirish uchun boshqa kunni bosing",
+        name:"Ism va familiya", address:"Manzil: tuman, ko'cha, mo'ljal", comment:"Izoh: qaysi o'yinlar kerak, vaqt…",
+        share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish",
+        rPick:"Olish", rRet:"Qaytarish", rNights:"Sutkalar", rDelivery:"Yetkazib berish", negotiable:"kelishiladi", rTotal:"Jami",
+        chSub:"Yangiliklar, chegirmalar va bo'sh kunlar", t1:"Tekshirilgan konsol", t2:"Tez tasdiqlash", t3:"O'yinlar o'rnatilgan",
+        rules:"• 1 sutka = 24 soat. Narx sutka boshlangan kunga qarab hisoblanadi.<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
+        nights:"sutka", som:"so'm", from:"dan", until:"gacha", agreed:"kelishiladi",
+        btnPick:"Olish kunini tanlang", btnEnd:"Qaytarish kunini tanlang", btnOrder:"Buyurtma berish",
+        eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
         months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
-  ru: { city:"📍 Ташкент", share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", chSub:"Новости, скидки и свободные даты",  perDay:"/ сутки", s1:"Выберите даты", s2:"Дополнительно", s3:"Ваши данные", s4:"Заказ",
-        lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", hint:"👆 Нажмите день начала, затем день окончания. На 1 день — нажмите день дважды.",
-        addon:"Третий геймпад", name:"Ваше имя", address:"Адрес: район, улица, ориентир", comment:"Комментарий: какие игры нужны, время…",
-        pickup:"🏠 Самовывоз", delivery:"🚕 Доставка", rProduct:"Товар", rDates:"Даты", rDays:"Срок",
-        rDelivery:"Доставка", rTotal:"Итого", t1:"Проверенная консоль", t2:"Быстрое подтверждение", t3:"Игры установлены",
-        rules:"• 1 сутки = 24 часа.<br>• При получении нужен паспорт или залог.<br>• После заказа администратор свяжется с вами для подтверждения.",
-        days:"дн.", som:"сум", negotiable:"по договорённости", freeToday:"● Сегодня свободна", busyToday:"● Сегодня занята",
-        btnPick:"Выберите даты", btnEnd:"Выберите дату окончания", btnOrder:"Оформить заказ",
-        eRange:"В диапазоне есть занятые дни — выберите другие даты", eMax:"Максимум {n} дней", eDays:"Сначала выберите даты",
-        eName:"Укажите имя", ePhone:"Укажите правильный номер телефона", eAddr:"Укажите адрес",
+  ru: { tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
+        wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", perDay:"/ сутки", chips:["2 геймпада","Топовые игры","HDMI кабель","Проверена"],
+        freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
+        lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Выходной",
+        hint0:"👆 Нажмите день получения", hint1:"↩️ Теперь нажмите день возврата (дни с синей рамкой)", hint2:"✅ Готово. Чтобы изменить — нажмите другой день",
+        name:"Имя и фамилия", address:"Адрес: район, улица, ориентир", comment:"Комментарий: какие игры нужны, время…",
+        share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", pickup:"🏠 Самовывоз", delivery:"🚕 Доставка",
+        rPick:"Получение", rRet:"Возврат", rNights:"Сутки", rDelivery:"Доставка", negotiable:"по договорённости", rTotal:"Итого",
+        chSub:"Новости, скидки и свободные даты", t1:"Проверенная консоль", t2:"Быстрое подтверждение", t3:"Игры установлены",
+        rules:"• 1 сутки = 24 часа. Цена считается по дню начала суток.<br>• При получении нужен паспорт или залог.<br>• После заказа администратор свяжется с вами для подтверждения.",
+        nights:"сут.", som:"сум", from:"с", until:"до", agreed:"по договорённости",
+        btnPick:"Выберите день получения", btnEnd:"Выберите день возврата", btnOrder:"Оформить заказ",
+        eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
         months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
-  en: { city:"📍 Tashkent", share:"📱 Use my Telegram number", shared:"✅ Number added", chSub:"News, discounts and free dates",  perDay:"/ day", s1:"Pick your dates", s2:"Extras", s3:"Your details", s4:"Order",
-        lFree:"Free", lBusy:"Booked", lSel:"Selected", hint:"👆 Tap the start day, then the end day. For 1 day — tap the same day twice.",
-        addon:"Third controller", name:"Your name", address:"Address: district, street, landmark", comment:"Comment: which games, what time…",
-        pickup:"🏠 Pickup", delivery:"🚕 Delivery", rProduct:"Item", rDates:"Dates", rDays:"Duration",
-        rDelivery:"Delivery", rTotal:"Total", t1:"Checked console", t2:"Fast confirmation", t3:"Games installed",
-        rules:"• 1 day = 24 hours.<br>• ID or a deposit is required at pickup.<br>• After ordering, the admin will contact you to confirm.",
-        days:"days", som:"UZS", negotiable:"negotiable", freeToday:"● Free today", busyToday:"● Booked today",
-        btnPick:"Pick your dates", btnEnd:"Pick the end date", btnOrder:"Place order",
-        eRange:"Booked days in range — pick other dates", eMax:"Maximum {n} days", eDays:"Pick your dates first",
-        eName:"Enter your name", ePhone:"Enter a valid phone number", eAddr:"Enter your address",
+  en: { tagline:"PS5 rental in Tashkent — daily, easy and fast", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
+        wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", perDay:"/ day", chips:["2 controllers","Top games","HDMI cable","Checked"],
+        freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
+        lFree:"Free", lBusy:"Booked", lSel:"Selected", lWe:"Weekend",
+        hint0:"👆 Tap the pickup day", hint1:"↩️ Now tap the return day (days with a blue outline)", hint2:"✅ Done. Tap another day to change",
+        name:"Full name", address:"Address: district, street, landmark", comment:"Comment: which games, time…",
+        share:"📱 Use my Telegram number", shared:"✅ Number added", pickup:"🏠 Pickup", delivery:"🚕 Delivery",
+        rPick:"Pickup", rRet:"Return", rNights:"Days", rDelivery:"Delivery", negotiable:"negotiable", rTotal:"Total",
+        chSub:"News, discounts and free dates", t1:"Checked console", t2:"Fast confirmation", t3:"Games installed",
+        rules:"• 1 day = 24 hours. The price depends on the day the 24h period starts.<br>• ID or a deposit is required at pickup.<br>• After ordering, the admin will contact you to confirm.",
+        nights:"days", som:"UZS", from:"from", until:"until", agreed:"by agreement",
+        btnPick:"Pick the pickup day", btnEnd:"Pick the return day", btnOrder:"Place order",
+        eRange:"Booked days in range — pick another date", eDays:"Pick your dates first", eName:"Enter your full name", ePhone:"Enter a valid phone number", eAddr:"Enter your address",
         months:["January","February","March","April","May","June","July","August","September","October","November","December"], dow:["Mo","Tu","We","Th","Fr","Sa","Su"] },
 };
+
+/* Umumiy geympad illyustratsiyasi (o'z suratingiz bo'lmasa ko'rinadi) */
+const PAD_SVG = `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe3ea"/></linearGradient>
+  <linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3140"/><stop offset="1" stop-color="#11141b"/></linearGradient>
+  <radialGradient id="gs" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#3a4152"/><stop offset="1" stop-color="#151922"/></radialGradient>
+ </defs>
+ <path d="M118 52c-30 0-52 18-62 50L28 196c-8 28 8 50 34 50 18 0 30-10 42-28l20-30h152l20 30c12 18 24 28 42 28 26 0 42-22 34-50l-28-94c-10-32-32-50-62-50z" fill="url(#gw)" stroke="#c9ced8" stroke-width="2"/>
+ <path d="M140 60h120c14 0 22 8 22 20v34c0 10-8 18-18 18H136c-10 0-18-8-18-18V80c0-12 8-20 22-20z" fill="url(#gd)"/>
+ <path d="M150 70h100" stroke="#3d7bff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+ <g fill="#2a2f3b"><rect x="80" y="94" width="14" height="40" rx="3"/><rect x="67" y="107" width="40" height="14" rx="3"/></g>
+ <g><circle cx="318" cy="94" r="9" fill="#2a2f3b"/><circle cx="298" cy="114" r="9" fill="#2a2f3b"/><circle cx="338" cy="114" r="9" fill="#2a2f3b"/><circle cx="318" cy="134" r="9" fill="#2a2f3b"/></g>
+ <circle cx="152" cy="168" r="24" fill="url(#gs)"/><circle cx="152" cy="168" r="15" fill="#20252f"/>
+ <circle cx="248" cy="168" r="24" fill="url(#gs)"/><circle cx="248" cy="168" r="15" fill="#20252f"/>
+ <circle cx="200" cy="152" r="7" fill="#c9ced8"/>
+ <rect x="108" y="76" width="8" height="4" rx="2" fill="#9aa2b1"/><rect x="284" y="76" width="8" height="4" rx="2" fill="#9aa2b1"/>
+</svg>`;
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const inTelegram = !!(tg && tg.initData);
 const params = new URLSearchParams(location.search);
 const tgLang = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
 const LANG = I18N[params.get("lang")] ? params.get("lang") : (I18N[tgLang] ? tgLang : "uz");
-const L = I18N[LANG];
-document.documentElement.lang = LANG;
-const MONTHS = L.months, DOW = L.dow;
+const L = I18N[LANG]; document.documentElement.lang = LANG;
 const $ = id => document.getElementById(id);
-const fmt = n => n.toLocaleString("ru-RU").replace(/[\s,]/g," ") + " " + L.som;
 const pad = n => String(n).padStart(2,"0");
 const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const parseIso = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
-const human = s => { const d = parseIso(s); return d.getDate()+" "+MONTHS[d.getMonth()].slice(0,3).toLowerCase(); };
+const addDays = (s,n) => { const d = parseIso(s); d.setDate(d.getDate()+n); return iso(d); };
+const num = n => Math.round(n).toLocaleString("ru-RU").replace(/[\s, ]/g," ");
+const fmt = n => num(n) + " " + L.som;
+const short = n => n >= 1000 ? Math.round(n/1000) + "k" : String(n);
+const human = s => { const d = parseIso(s); return d.getDate()+" "+L.months[d.getMonth()].slice(0,3).toLowerCase()+", "+L.dow[(d.getDay()+6)%7]; };
 const haptic = t => { try { t==="sel" ? tg.HapticFeedback.selectionChanged() : tg.HapticFeedback.notificationOccurred(t); } catch(e){} };
-const imgTag = (p, cls="") => `<img class="${cls}" src="${p.img}" alt="" onerror="this.outerHTML='<span class=&quot;ph&quot;>${p.emoji}</span>'">`;
 
-// Band kunlar bot tomonidan URL orqali keladi: ?ps5=2026-11-20,2026-11-21&pult=...&lang=uz
-const booked = {};
-CONFIG.products.forEach(p => booked[p.id] = new Set((params.get(p.id) || "").split(",").filter(Boolean)));
-if (!inTelegram && !params.get("ps5") && !params.get("pult")) { // brauzerda ko'rish uchun namunaviy band kunlar
-  const t = new Date(); [2,3,7].forEach(k => { const d = new Date(t); d.setDate(t.getDate()+k); booked.ps5.add(iso(d)); });
+/* ---------- ma'lumot (bot URL orqali yuboradi) ---------- */
+const WD = +params.get("wd") || DEFAULTS.wd, WE = +params.get("we") || DEFAULTS.we;
+const SPECIAL = {};
+(params.get("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
+const booked = new Set((params.get("ps5") || "").split(",").filter(Boolean));
+let OPEN = null; // {from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}
+const openRaw = params.get("open") ?? DEFAULTS.open;
+if (openRaw && openRaw.includes("..")) { const [a,b] = openRaw.split(".."); OPEN = { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; }
+if (!inTelegram && !location.search) { // brauzer sinovi: namunaviy holat
+  const t = new Date(); [3,4,9].forEach(k => { const d = new Date(t); d.setDate(t.getDate()+k); booked.add(iso(d)); });
 }
 
 const today = new Date(); today.setHours(0,0,0,0);
-const state = { product: CONFIG.products[0].id, start: null, end: null, view: new Date(today.getFullYear(), today.getMonth(), 1), delivery: "pickup" };
-const cur = () => CONFIG.products.find(x => x.id === state.product);
+const TODAY = iso(today);
+const priceOf = d => SPECIAL[d] ?? ([0,6].includes(parseIso(d).getDay()) ? WE : WD);
+const isWeekend = d => [0,6].includes(parseIso(d).getDay());
+const nightFree = d => d >= TODAY && !booked.has(d) && !(OPEN && (d < OPEN.from || d >= OPEN.to));
+
+const firstFree = (() => { for (let i=0;i<400;i++){ const d = addDays(TODAY,i); if (nightFree(d)) return d; } return null; })();
+const state = { start:null, end:null, delivery:"pickup",
+  view: firstFree ? new Date(parseIso(firstFree).getFullYear(), parseIso(firstFree).getMonth(), 1) : new Date(today.getFullYear(), today.getMonth(), 1) };
 
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600); haptic("warning"); }
 
-function renderHero(){
-  const p = cur();
-  $("heroMedia").innerHTML = imgTag(p);
-  $("heroTitle").textContent = p.name[LANG];
-  $("heroSub").textContent = p.sub[LANG];
-  $("heroPrice").textContent = fmt(p.price);
-  $("heroChips").innerHTML = p.chips[LANG].map(c => `<span class="chip">${c}</span>`).join("");
-  const busyToday = booked[p.id].has(iso(today));
-  $("badge").textContent = busyToday ? L.busyToday : L.freeToday;
-  $("badge").classList.toggle("busy", busyToday);
-}
-
-function renderProducts(){
-  $("products").innerHTML = CONFIG.products.map(p => `
-    <div class="tab ${p.id===state.product?"active":""}" data-id="${p.id}">
-      <div class="thumb">${imgTag(p)}</div>
-      <div><div class="t-name">${p.short[LANG]}</div><div class="t-price">${fmt(p.price)}</div></div>
-    </div>`).join("");
-  document.querySelectorAll(".tab").forEach(el => el.onclick = () => {
-    if (state.product === el.dataset.id) return;
-    state.product = el.dataset.id; state.start = state.end = null; haptic("sel"); renderAll();
-  });
-  const showAddon = state.product === "ps5";
-  $("addonsBox").style.display = showAddon ? "" : "none";
-  $("formStep").textContent = showAddon ? 3 : 2;
-  $("sumStep").textContent = showAddon ? 4 : 3;
-}
-
-function selectedDates(){
-  if (!state.start) return [];
-  const end = state.end || state.start, out = [];
-  for (let d = parseIso(state.start); d <= parseIso(end); d.setDate(d.getDate()+1)) out.push(iso(d));
+/* end tanlash mumkin bo'lgan kunlar: start dan keyin, oraliqdagi barcha sutkalar bo'sh */
+function returnable(start){
+  const out = new Set(); let d = start;
+  for (let i=0;i<400 && nightFree(d);i++){ d = addDays(d,1); out.add(d); }
   return out;
+}
+const nightsOf = (s,e) => { const out=[]; for (let d=s; d<e; d=addDays(d,1)) out.push(d); return out; };
+
+/* ---------- render ---------- */
+function renderStatic(){
+  document.querySelectorAll("[data-i]").forEach(el => { if (L[el.dataset.i] !== undefined) el.textContent = L[el.dataset.i]; });
+  document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = L[el.dataset.ph]);
+  document.querySelectorAll("[data-html]").forEach(el => el.innerHTML = L[el.dataset.html]);
+  const img = new Image(); img.alt = "";
+  img.onload = () => $("photo").appendChild(img);
+  img.onerror = () => $("photo").insertAdjacentHTML("beforeend", PAD_SVG);
+  img.src = DEFAULTS.photo;
+  const futureSp = Object.keys(SPECIAL).filter(d => d >= TODAY).sort();
+  let rates = `<div class="rate"><small>${L.wd}</small><b>${fmt(WD)} <em>${L.perDay}</em></b></div>
+               <div class="rate we"><small>${L.we}</small><b>${fmt(WE)} <em>${L.perDay}</em></b></div>`;
+  if (futureSp.length) {
+    const vals = [...new Set(futureSp.map(d => SPECIAL[d]))];
+    const range = futureSp.length > 1 ? `${parseIso(futureSp[0]).getDate()}–${human(futureSp.at(-1)).split(",")[0]}` : human(futureSp[0]).split(",")[0];
+    rates += `<div class="rate sp"><small>⭐ ${L.sp} · ${range}</small><b>${vals.map(fmt).join(" / ")} <em>${L.perDay}</em></b></div>`;
+  }
+  $("rates").innerHTML = rates;
+  $("chips").innerHTML = L.chips.map(c => `<span class="chip">${c}</span>`).join("");
+  $("pillTxt").textContent = firstFree ? L.freeNow : L.noFree;
+  $("pill").classList.toggle("busy", !firstFree);
+  if (OPEN) {
+    $("avail").style.display = "flex";
+    $("availTxt").textContent = `${human(OPEN.from)} ${OPEN.fromT}  →  ${human(OPEN.to)} ${OPEN.toT}`;
+  }
 }
 
 function renderCalendar(){
   const v = state.view, y = v.getFullYear(), m = v.getMonth();
-  $("monthTitle").textContent = MONTHS[m] + " " + y;
-  const minView = new Date(today.getFullYear(), today.getMonth(), 1);
-  const maxView = new Date(today.getFullYear(), today.getMonth()+CONFIG.monthsAhead-1, 1);
-  $("prev").disabled = v <= minView; $("next").disabled = v >= maxView;
+  $("monthTitle").textContent = L.months[m] + " " + y;
+  const minV = new Date(today.getFullYear(), today.getMonth(), 1);
+  const maxV = new Date(today.getFullYear(), today.getMonth()+DEFAULTS.monthsAhead-1, 1);
+  $("prev").disabled = v <= minV; $("next").disabled = v >= maxV;
   const first = (new Date(y,m,1).getDay()+6)%7, days = new Date(y,m+1,0).getDate();
-  const sel = new Set(selectedDates()), bk = booked[state.product];
-  let html = DOW.map(d=>`<div class="dow">${d}</div>`).join("");
+  const ret = state.start && !state.end ? returnable(state.start) : new Set();
+  const inRange = new Set(state.start && state.end ? nightsOf(state.start, state.end) : []);
+  let html = L.dow.map((d,i)=>`<div class="dow ${i>4?"we":""}">${d}</div>`).join("");
   for (let i=0;i<first;i++) html += "<div></div>";
   for (let d=1; d<=days; d++){
-    const date = new Date(y,m,d), s = iso(date);
-    let cls = "day";
-    if (date < today) cls += " past";
-    else if (bk.has(s)) cls += " booked";
-    else if (s===state.start || s===state.end) cls += " sel";
-    else if (sel.has(s)) cls += " inrange";
-    else cls += " free";
-    if (date.getTime()===today.getTime()) cls += " today";
-    html += `<div class="${cls}" data-d="${s}">${d}</div>`;
+    const s = iso(new Date(y,m,d)); const p = priceOf(s);
+    let cls = "day", click = false;
+    if (s < TODAY) cls += " past";
+    else if (s === state.start || s === state.end) { cls += " sel"; click = true; }
+    else if (inRange.has(s)) { cls += " inr"; click = true; }
+    else if (ret.has(s) && !nightFree(s)) { cls += " ret"; click = true; }
+    else if (nightFree(s)) { cls += " free"; click = true; if (s in SPECIAL) cls += " spc"; else if (isWeekend(s)) cls += " wkend"; }
+    else cls += " busy";
+    if (s === TODAY) cls += " today";
+    const showPr = s >= TODAY && (nightFree(s));
+    html += `<div class="${cls}" ${click?`data-d="${s}"`:""}>${d}${showPr?`<span class="pr">${short(p)}</span>`:(cls.includes(" ret")?`<span class="pr">↩</span>`:"")}</div>`;
   }
   $("grid").innerHTML = html;
-  document.querySelectorAll(".day.free,.day.sel,.day.inrange").forEach(el => el.onclick = () => pickDay(el.dataset.d));
+  document.querySelectorAll(".day[data-d]").forEach(el => el.onclick = () => pickDay(el.dataset.d));
+  $("hint").textContent = !state.start ? L.hint0 : (!state.end ? L.hint1 : L.hint2);
 }
 
 function pickDay(s){
   haptic("sel");
-  if (!state.start || state.end) { state.start = s; state.end = null; }
-  else if (s === state.start) { state.end = s; }
-  else {
-    let a = state.start, b = s; if (b < a) [a,b] = [b,a];
-    state.start = a; state.end = b;
-    const range = selectedDates();
-    if (range.some(d => booked[state.product].has(d))) { toast(L.eRange); state.start = s; state.end = null; }
-    else if (range.length > CONFIG.maxDays) { toast(L.eMax.replace("{n}", CONFIG.maxDays)); state.start = s; state.end = null; }
+  if (!state.start || state.end) {                      // yangi tanlov
+    if (!nightFree(s)) return;
+    state.start = s; state.end = null;
+  } else if (s === state.start) {                        // shu kunni yana bosdi → 1 sutka
+    state.end = addDays(s,1);
+  } else if (s < state.start) {
+    if (nightFree(s)) { state.start = s; state.end = null; }
+  } else {
+    if (returnable(state.start).has(s)) state.end = s;
+    else { toast(L.eRange); if (nightFree(s)) { state.start = s; state.end = null; } }
   }
   renderCalendar(); renderSummary();
 }
 
 function calc(){
-  const p = cur();
-  const days = state.end ? selectedDates().length : 0;
-  const extra = state.product==="ps5" && $("extraPult").checked;
-  const addon = extra ? CONFIG.extraPultPrice*days : 0;
-  const deliv = state.delivery==="delivery" ? CONFIG.deliveryPrice : 0;
-  return { p, days, extra, addon, total: p.price*days + addon + deliv };
+  if (!state.start || !state.end) return { nights:[], total:0, groups:[] };
+  const n = nightsOf(state.start, state.end);
+  const groups = {};
+  n.forEach(d => { const p = priceOf(d); const k = (d in SPECIAL) ? "sp" : (isWeekend(d) ? "we" : "wd"); const key = k+":"+p; groups[key] = groups[key] || {k, p, c:0}; groups[key].c++; });
+  return { nights:n, total:n.reduce((a,d)=>a+priceOf(d),0), groups:Object.values(groups) };
+}
+
+function timeFor(date, edge){
+  const t = (word, hm) => LANG === "uz" ? `${hm} ${word}` : `${word} ${hm}`;
+  if (OPEN && edge==="start" && date === OPEN.from) return "· " + t(L.from, OPEN.fromT);
+  if (OPEN && edge==="end" && date === OPEN.to) return "· " + t(L.until, OPEN.toT);
+  return "";
 }
 
 function renderSummary(){
   const c = calc();
-  $("sProduct").textContent = c.p.name[LANG];
-  $("sDates").textContent = !state.start ? "—" : (state.end ? (state.start===state.end ? human(state.start) : human(state.start)+" → "+human(state.end)) : human(state.start)+" → ?");
-  $("sDays").textContent = c.days + " " + L.days;
-  $("sAddonRow").style.display = c.extra ? "" : "none"; $("sAddon").textContent = fmt(c.addon);
+  $("sPick").textContent = state.start ? `${human(state.start)} ${timeFor(state.start,"start")}`.trim() : "—";
+  $("sRet").textContent = state.end ? `${human(state.end)} ${timeFor(state.end,"end")}`.trim() : "—";
+  $("sNights").textContent = c.nights.length + " " + L.nights;
+  if (c.nights.length) {
+    $("calc").style.display = "block";
+    $("calc").innerHTML = c.groups.map(g => `<div><span>${g.c} × ${fmt(g.p)} <small style="color:var(--muted)">(${g.k==="sp"?"⭐ "+L.sp:(g.k==="we"?L.we:L.wd)})</small></span><span>${fmt(g.c*g.p)}</span></div>`).join("");
+  } else $("calc").style.display = "none";
   $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
-  $("sDelivery").textContent = CONFIG.deliveryPrice ? fmt(CONFIG.deliveryPrice) : L.negotiable;
   $("sTotal").textContent = fmt(c.total);
-  const label = c.days ? `${L.btnOrder}  •  ${fmt(c.total)}` : (state.start ? L.btnEnd : L.btnPick);
+  const label = c.nights.length ? `${L.btnOrder}  •  ${fmt(c.total)}` : (state.start ? L.btnEnd : L.btnPick);
   if (inTelegram) {
     tg.MainButton.setText(label);
-    if (c.days) { tg.MainButton.enable(); tg.MainButton.color = "#3d7bff"; tg.MainButton.textColor = "#ffffff"; }
-    else { tg.MainButton.disable(); tg.MainButton.color = "#1e2333"; tg.MainButton.textColor = "#6b7488"; }
+    if (c.nights.length) { tg.MainButton.enable(); tg.MainButton.color = "#2f8cff"; tg.MainButton.textColor = "#ffffff"; }
+    else { tg.MainButton.disable(); tg.MainButton.color = "#252b38"; tg.MainButton.textColor = "#6b7488"; }
     tg.MainButton.show();
-  } else { $("bar").style.display="block"; $("fallbackBtn").textContent=label; $("fallbackBtn").disabled=!c.days; }
+  } else { $("bar").style.display = "block"; $("fallbackBtn").textContent = label; $("fallbackBtn").disabled = !c.nights.length; }
 }
-
-function renderAll(){ renderHero(); renderProducts(); renderCalendar(); renderSummary(); }
 
 function submit(){
   const c = calc();
   const name = $("name").value.trim(), phone = $("phone").value.trim(), address = $("address").value.trim();
-  if (!c.days) return toast(L.eDays);
+  if (!c.nights.length) return toast(L.eDays);
   if (name.length < 2) { $("name").focus(); return toast(L.eName); }
   if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast(L.ePhone); }
   if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast(L.eAddr); }
   haptic("success");
-  const order = {
-    lang: LANG, product: c.p.id, start: state.start, end: state.end, days: c.days,
-    extra_pult: c.extra, delivery: state.delivery, address,
-    name, phone, comment: $("comment").value.trim().slice(0,300), total: c.total
-  };
+  const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, days:c.nights.length,
+                  delivery:state.delivery, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
   if (inTelegram) tg.sendData(JSON.stringify(order));
   else alert("Brauzerda sinov rejimi. Telegram ichida bu buyurtma botga yuboriladi:\n\n" + JSON.stringify(order, null, 2));
 }
 
-// ---------- hodisalar ----------
+/* ---------- hodisalar ---------- */
 $("prev").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()-1, 1); renderCalendar(); };
 $("next").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()+1, 1); renderCalendar(); };
-$("extraPult").onchange = () => { haptic("sel"); renderSummary(); };
-$("addonPrice").textContent = fmt(CONFIG.extraPultPrice);
-$("addonThumb").innerHTML = imgTag(CONFIG.products.find(p=>p.id==="pult"));
-$("rules").innerHTML = L.rules;
-document.querySelectorAll("[data-i]").forEach(el => { if (L[el.dataset.i] !== undefined) el.textContent = L[el.dataset.i]; });
-document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = L[el.dataset.ph]);
 document.querySelectorAll("#deliverySeg button").forEach(b => b.onclick = () => {
   haptic("sel");
   document.querySelectorAll("#deliverySeg button").forEach(x => x.classList.toggle("active", x===b));
   state.delivery = b.dataset.v; $("addressBox").style.display = state.delivery==="delivery" ? "" : "none"; renderSummary();
 });
 $("fallbackBtn").onclick = submit;
+["channelCard","chTop"].forEach(id => $(id).onclick = e => { if (inTelegram && tg.openTelegramLink) { e.preventDefault(); tg.openTelegramLink("https://t.me/ps_5_gta_6"); } });
 
-// Telefon: Telegram raqamini bir bosishda olish
 const shareBtn = $("shareBtn");
-shareBtn.textContent = L.share;
 if (inTelegram && typeof tg.requestContact === "function") {
-  shareBtn.style.display = "flex";
+  shareBtn.textContent = L.share; shareBtn.style.display = "flex";
   shareBtn.onclick = () => {
     haptic("sel");
     tg.requestContact((ok, res) => {
       const c = res && res.responseUnsafe && res.responseUnsafe.contact;
       if (ok && c && c.phone_number) {
-        const ph = String(c.phone_number);
-        $("phone").value = ph.startsWith("+") ? ph : "+" + ph;
+        const ph = String(c.phone_number); $("phone").value = ph.startsWith("+") ? ph : "+" + ph;
         if (!$("name").value.trim()) $("name").value = [c.first_name, c.last_name].filter(Boolean).join(" ");
-        shareBtn.textContent = L.shared; shareBtn.classList.add("done"); haptic("success");
-      } else if (ok) {
-        shareBtn.textContent = L.shared; shareBtn.classList.add("done");
       }
+      if (ok) { shareBtn.textContent = L.shared; shareBtn.classList.add("done"); haptic("success"); }
     });
   };
 }
-// Kanal: Telegram ichida to'g'ridan-to'g'ri ochish
-$("channelCard").onclick = (e) => { if (inTelegram && tg.openTelegramLink) { e.preventDefault(); tg.openTelegramLink("https://t.me/ps_5_gta_6"); } };
 
 if (inTelegram) {
   tg.ready(); tg.expand();
-  try { tg.setHeaderColor("#07080d"); tg.setBackgroundColor("#07080d"); tg.setBottomBarColor && tg.setBottomBarColor("#07080d"); } catch(e){}
+  try { tg.setHeaderColor("#0b0d12"); tg.setBackgroundColor("#0b0d12"); tg.setBottomBarColor && tg.setBottomBarColor("#0b0d12"); } catch(e){}
   tg.MainButton.onClick(submit);
   const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (u) $("name").value = [u.first_name, u.last_name].filter(Boolean).join(" ");
 }
-renderAll();
+renderStatic(); renderCalendar(); renderSummary();
 </script>
 </body>
 </html>
