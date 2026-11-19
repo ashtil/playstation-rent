@@ -273,7 +273,7 @@
    Narx va bo'sh vaqtni bot o'zi URL orqali yuboradi (bot.py dagi sozlamalar).
    Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
    O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
-const DEFAULTS = { wd: 280000, we: 300000, sp: "2026-11-23:300000,2026-11-24:300000,2026-11-25:300000",
+const DEFAULTS = { wd: 280000, we: 300000, sp: "",
   open: "2026-11-23T20:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-25T20:00",
   monthsAhead: 12, photo: "ps5_hd.jpg", hours: [18,19,20],
   blocked: ["2026-11-23"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
@@ -533,10 +533,8 @@ function renderSummary(){
   const ready = c.nights.length && state.time;
   const label = ready ? `${L.btnOrder}  •  ${fmt(c.total)}` : (c.nights.length ? L.eTime : L.btnPick);
   if (inTelegram) {
-    tg.MainButton.setText(label);
-    if (ready) { tg.MainButton.enable(); tg.MainButton.color = "#2f8cff"; tg.MainButton.textColor = "#ffffff"; }
-    else { tg.MainButton.disable(); tg.MainButton.color = "#252b38"; tg.MainButton.textColor = "#6b7488"; }
-    tg.MainButton.show();
+    // matn, rang va holatni bitta chaqiruvda yangilaymiz (aks holda Telegram eski summani ko'rsatib qolishi mumkin)
+    tg.MainButton.setParams({ text: label, color: ready ? "#2f8cff" : "#252b38", text_color: ready ? "#ffffff" : "#6b7488", is_active: !!ready, is_visible: true });
   } else { $("bar").style.display = "block"; $("fallbackBtn").textContent = label; $("fallbackBtn").disabled = !ready; }
 }
 
