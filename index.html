@@ -258,7 +258,7 @@ const I18N = {
         wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", perDay:"/ sutka", chips:["2 ta pult","Mashhur o'yinlar","HDMI kabel","Tekshirilgan"],
         freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Kunlarni tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
         lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Dam olish kuni",
-        hint0:"👆 Birinchi kunni bosing", hint1:"👉 Necha kun kerak bo'lsa, oxirgi kunni bosing (1 kun bo'lsa — tayyor)", hint2:"✅ Tayyor. Qaytadan tanlash uchun istalgan kunni bosing", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
+        hint0:"👆 Kerakli kunlarni bosing — har bir bosilgan kun yashil bo'ladi", hint1:"✅ Yana kun qo'shish uchun bosing. Bekor qilish uchun yashil kunni qayta bosing", hint2:"", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
         name:"Ism va familiya", address:"Manzil: tuman, ko'cha, mo'ljal", comment:"Izoh: qaysi o'yinlar kerak, vaqt…",
         share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish",
         rPick:"Olish", rRet:"Qaytarish", rNights:"Kunlar", rDelivery:"Yetkazib berish", negotiable:"kelishiladi", rTotal:"Jami",
@@ -272,7 +272,7 @@ const I18N = {
         wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", perDay:"/ сутки", chips:["2 геймпада","Топовые игры","HDMI кабель","Проверена"],
         freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
         lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Выходной",
-        hint0:"👆 Нажмите первый день", hint1:"👉 Нажмите последний день аренды (если 1 день — уже готово)", hint2:"✅ Готово. Чтобы выбрать заново — нажмите любой день", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
+        hint0:"👆 Нажмите нужные дни — каждый выбранный день станет зелёным", hint1:"✅ Нажмите ещё, чтобы добавить дни. Чтобы убрать — нажмите зелёный день снова", hint2:"", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
         name:"Имя и фамилия", address:"Адрес: район, улица, ориентир", comment:"Комментарий: какие игры нужны, время…",
         share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", pickup:"🏠 Самовывоз", delivery:"🚕 Доставка",
         rPick:"Получение", rRet:"Возврат", rNights:"Дней", rDelivery:"Доставка", negotiable:"по договорённости", rTotal:"Итого",
@@ -286,7 +286,7 @@ const I18N = {
         wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", perDay:"/ day", chips:["2 controllers","Top games","HDMI cable","Checked"],
         freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
         lFree:"Free", lBusy:"Booked", lSel:"Selected", lWe:"Weekend",
-        hint0:"👆 Tap the first day", hint1:"👉 Tap the last rental day (for 1 day — already done)", hint2:"✅ Done. Tap any day to choose again", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
+        hint0:"👆 Tap the days you need — each selected day turns green", hint1:"✅ Tap more days to add. Tap a green day again to remove it", hint2:"", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
         name:"Full name", address:"Address: district, street, landmark", comment:"Comment: which games, time…",
         share:"📱 Use my Telegram number", shared:"✅ Number added", pickup:"🏠 Pickup", delivery:"🚕 Delivery",
         rPick:"Pickup", rRet:"Return", rNights:"Days", rDelivery:"Delivery", negotiable:"negotiable", rTotal:"Total",
@@ -352,7 +352,10 @@ const isWeekend = d => [0,6].includes(parseIso(d).getDay());
 const nightFree = d => d >= TODAY && !booked.has(d) && !(OPEN && (d < OPEN.from || d >= OPEN.to));
 
 const firstFree = (() => { for (let i=0;i<400;i++){ const d = addDays(TODAY,i); if (nightFree(d)) return d; } return null; })();
-const state = { start:null, last:null, awaiting:false, get end(){ return this.last ? addDays(this.last,1) : null; }, time:null, delivery:"pickup", pay:"cash",
+const state = { days:new Set(), time:null,
+  get sorted(){ return [...this.days].sort(); },
+  get start(){ return this.sorted[0] || null; },
+  get end(){ const s = this.sorted; return s.length ? addDays(s[s.length-1],1) : null; }, delivery:"pickup", pay:"cash",
   view: firstFree ? new Date(parseIso(firstFree).getFullYear(), parseIso(firstFree).getMonth(), 1) : new Date(today.getFullYear(), today.getMonth(), 1) };
 
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600); haptic("warning"); }
@@ -364,6 +367,16 @@ function returnable(start){
   return out;
 }
 const nightsOf = (s,e) => { const out=[]; for (let d=s; d<e; d=addDays(d,1)) out.push(d); return out; };
+/* tanlangan kunlarni ketma-ket bloklarga ajratish: [{from, to(qaytarish kuni), n}] */
+function blocks(){
+  const out = []; let cur = null;
+  state.sorted.forEach(d => {
+    if (cur && addDays(cur.last,1) === d) { cur.last = d; cur.n++; }
+    else { cur = { from:d, last:d, n:1 }; out.push(cur); }
+  });
+  out.forEach(b => b.to = addDays(b.last,1));
+  return out;
+}
 
 /* ---------- render ---------- */
 function renderStatic(){
@@ -399,16 +412,16 @@ function renderCalendar(){
   const maxV = new Date(today.getFullYear(), today.getMonth()+DEFAULTS.monthsAhead-1, 1);
   $("prev").disabled = v <= minV; $("next").disabled = v >= maxV;
   const first = (new Date(y,m,1).getDay()+6)%7, days = new Date(y,m+1,0).getDate();
-  const sel = new Set(state.start ? nightsOf(state.start, state.end) : []);
-  const retDay = state.end;
+  const sel = state.days;
+  const retDays = new Set(blocks().map(b => b.to));
   let html = L.dow.map((d,i)=>`<div class="dow ${i>4?"we":""}">${d}</div>`).join("");
   for (let i=0;i<first;i++) html += "<div></div>";
   for (let d=1; d<=days; d++){
     const s = iso(new Date(y,m,d)); const p = priceOf(s);
     let cls = "day", click = false, sub = "";
     if (s < TODAY) cls += " past";
-    else if (sel.has(s)) { cls += (s === state.start || s === state.last) ? " sel" : " inr"; click = true; sub = short(p); }
-    else if (s === retDay) { cls += " ret"; click = nightFree(s); sub = "↩"; }
+    else if (sel.has(s)) { cls += " sel"; click = true; sub = short(p); }
+    else if (retDays.has(s)) { cls += " ret"; click = nightFree(s); sub = "↩"; }
     else if (nightFree(s)) { cls += " free"; click = true; sub = short(p); if (s in SPECIAL) cls += " spc"; else if (isWeekend(s)) cls += " wkend"; }
     else cls += " busy";
     if (s === TODAY) cls += " today";
@@ -416,46 +429,39 @@ function renderCalendar(){
   }
   $("grid").innerHTML = html;
   document.querySelectorAll(".day[data-d]").forEach(el => el.onclick = () => pickDay(el.dataset.d));
-  $("hint").textContent = !state.start ? L.hint0 : (state.awaiting ? L.hint1 : L.hint2);
+  $("hint").textContent = !state.days.size ? L.hint0 : L.hint1;
 }
 
 function rangeFree(a, b){ for (let d=a; d<=b; d=addDays(d,1)) if (!nightFree(d)) return false; return true; }
 
 function pickDay(s){
   haptic("sel");
-  if (!nightFree(s)) return;
-  if (state.start && state.awaiting && s > state.start) {
-    if (rangeFree(state.start, s)) { state.last = s; state.awaiting = false; }
-    else { toast(L.eRange); state.start = state.last = s; state.awaiting = true; }
-  } else if (state.start && state.awaiting && s === state.start) {
-    state.awaiting = false;                         // shu kunni yana bosdi → 1 kun, tayyor
-  } else {
-    state.start = state.last = s; state.awaiting = true;   // yangi tanlov: hozircha 1 kun
-  }
+  if (state.days.has(s)) state.days.delete(s);          // qayta bosildi → bekor
+  else if (nightFree(s)) state.days.add(s);              // bo'sh kun → tanlandi
   renderCalendar(); renderTimes(); renderSummary();
 }
 
 function calc(){
-  if (!state.start) return { nights:[], total:0, groups:[] };
-  const n = nightsOf(state.start, state.end);
+  if (!state.days.size) return { nights:[], total:0, groups:[] };
+  const n = state.sorted;
   const groups = {};
   n.forEach(d => { const p = priceOf(d); const k = (d in SPECIAL) ? "sp" : (isWeekend(d) ? "we" : "wd"); const key = k+":"+p; groups[key] = groups[key] || {k, p, c:0}; groups[key].c++; });
   return { nights:n, total:n.reduce((a,d)=>a+priceOf(d),0), groups:Object.values(groups) };
 }
 
 function validTimes(){
-  if (!state.start) return [];
-  const now = new Date(), nowH = now.getHours();
-  return DEFAULTS.hours.map(h => pad(h)+":00").filter(t => {
-    if (OPEN && state.start === OPEN.from && t < OPEN.fromT) return false;
-    if (OPEN && state.end === OPEN.to && t > OPEN.toT) return false;
-    if (state.start === TODAY && +t.slice(0,2) <= nowH) return false;
+  if (!state.days.size) return [];
+  const now = new Date(), nowH = now.getHours(), bl = blocks();
+  return DEFAULTS.hours.map(h => pad(h)+":00").filter(t => bl.every(b => {
+    if (OPEN && b.from === OPEN.from && t < OPEN.fromT) return false;
+    if (OPEN && b.to === OPEN.to && t > OPEN.toT) return false;
+    if (b.from === TODAY && +t.slice(0,2) <= nowH) return false;
     return true;
-  });
+  }));
 }
 function renderTimes(){
   const sec = $("timeSec");
-  if (!state.start) { sec.style.display = "none"; state.time = null; return; }
+  if (!state.days.size) { sec.style.display = "none"; state.time = null; return; }
   sec.style.display = "";
   const ts = validTimes();
   if (!ts.includes(state.time)) state.time = ts.includes("10:00") ? "10:00" : (ts[0] || null);
@@ -466,12 +472,14 @@ function renderTimes(){
     return `<div class="tgrp" style="grid-column:1/-1">${L.period[i]}</div>` + items.map(t => `<button class="time ${t===state.time?"on":""}" data-t="${t}">${t}</button>`).join("");
   }).join("");
   document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); });
-  $("tnote").textContent = ts.length ? L.tNote.replace("{d}", human(state.end)).replace("{h}", state.time) : L.tNone;
+  $("tnote").textContent = ts.length ? L.tNote.replace("{d}", blocks().map(b => human(b.to).split(",")[0]).join(", ")).replace("{h}", state.time) : L.tNone;
 }
 function renderSummary(){
   const c = calc();
-  $("sPick").textContent = state.start ? `${human(state.start)}${state.end && state.time ? " · " + state.time : ""}` : "—";
-  $("sRet").textContent = state.end ? `${human(state.end)}${state.time ? " · " + state.time : ""}` : "—";
+  const bl = blocks(), tm = state.time ? " " + state.time : "";
+  const sh = d => human(d).split(",")[0];
+  $("sPick").innerHTML = bl.length ? bl.map(b => sh(b.from) + tm).join("<br>") : "—";
+  $("sRet").innerHTML = bl.length ? bl.map(b => sh(b.to) + tm).join("<br>") : "—";
   $("sNights").textContent = c.nights.length + " " + L.nights;
   if (c.nights.length) {
     $("calc").style.display = "block";
@@ -481,7 +489,7 @@ function renderSummary(){
   $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
   $("sTotal").textContent = fmt(c.total);
   const ready = c.nights.length && state.time;
-  const label = ready ? `${L.btnOrder}  •  ${fmt(c.total)}` : (c.nights.length ? L.eTime : (state.start ? L.btnEnd : L.btnPick));
+  const label = ready ? `${L.btnOrder}  •  ${fmt(c.total)}` : (c.nights.length ? L.eTime : L.btnPick);
   if (inTelegram) {
     tg.MainButton.setText(label);
     if (ready) { tg.MainButton.enable(); tg.MainButton.color = "#2f8cff"; tg.MainButton.textColor = "#ffffff"; }
@@ -499,7 +507,7 @@ function submit(){
   if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast(L.ePhone); }
   if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast(L.eAddr); }
   haptic("success");
-  const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, days:c.nights.length, pick_time:state.time, ret_time:state.time,
+  const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, dates:state.sorted, days:c.nights.length, pick_time:state.time, ret_time:state.time,
                   delivery:state.delivery, pay:state.pay, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
   if (inTelegram) tg.sendData(JSON.stringify(order));
   else alert("Brauzerda sinov rejimi. Telegram ichida bu buyurtma botga yuboriladi:\n\n" + JSON.stringify(order, null, 2));
