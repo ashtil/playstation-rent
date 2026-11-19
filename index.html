@@ -28,7 +28,7 @@
   .head{padding:18px 16px 4px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .head h1{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
   .head h1{color:#fff;font-weight:700;letter-spacing:-.01em}
-  .head h1 span{color:#a0532d;font-weight:700;text-shadow:0 0 18px rgba(160,72,40,.35)}
+  .head h1 span{color:#8b3a0b;font-weight:800;letter-spacing:-.02em;text-shadow:0 0 14px rgba(139,58,11,.45)}
   .head p{color:#c3c9d4}
   .head p{color:var(--muted);font-size:13.5px;margin-top:4px}
   .chbtn{flex:none;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);color:var(--text);padding:8px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none}
@@ -173,7 +173,7 @@
 
 <div class="head">
   <div>
-    <h1>Play<span>Rent</span></h1>
+    <h1>PLAY<span>rent</span></h1>
     <p data-i="tagline"></p>
   </div>
   <a class="chbtn" id="chTop" href="https://t.me/ps_5_gta_6" target="_blank">📢 <span data-i="chShort"></span></a>
@@ -360,12 +360,15 @@ const human = s => { const d = parseIso(s); return d.getDate()+" "+L.months[d.ge
 const haptic = t => { try { t==="sel" ? tg.HapticFeedback.selectionChanged() : tg.HapticFeedback.notificationOccurred(t); } catch(e){} };
 
 /* ---------- ma'lumot (bot URL orqali yuboradi) ---------- */
-const WD = +params.get("wd") || DEFAULTS.wd, WE = +params.get("we") || DEFAULTS.we;
+// Yangi bot "hrs" ni yuboradi. Eski bot (hrs yo'q) eski sana/narxlarni yuborsa — saytdagi standart qiymatlar ishlatiladi.
+const NEWBOT = params.has("hrs");
+const P = k => NEWBOT ? params.get(k) : null;
+const WD = +P("wd") || DEFAULTS.wd, WE = +P("we") || DEFAULTS.we;
 const SPECIAL = {};
-(params.get("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
+(P("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
 const booked = new Set((params.get("ps5") || "").split(",").filter(Boolean));
 // Bo'sh oraliqlar: [{from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}, ...]. Bo'sh ro'yxat = hamma kun ochiq.
-const openRaw = params.has("open") ? params.get("open") : (location.search ? "" : DEFAULTS.open);
+const openRaw = NEWBOT ? (params.get("open") || "") : DEFAULTS.open;
 const OPENS = (openRaw || "").split(";").filter(x => x.includes("..")).map(x => { const [a,b] = x.split(".."); return { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; });
 const LIMITED = openRaw === "none" || OPENS.length > 0;  // "none" = hech qaysi kun ochiq emas
 const winOf = d => OPENS.find(w => d >= w.from && d < w.to);
