@@ -333,7 +333,8 @@ const PAD_SVG = `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
 </svg>`;
 
 const tg = window.Telegram && window.Telegram.WebApp;
-const inTelegram = !!(tg && tg.initData);
+// Klaviatura tugmasidan ochilganda initData bo'sh bo'ladi, shuning uchun platformaga qaraymiz
+const inTelegram = !!(tg && ((tg.platform && tg.platform !== "unknown") || tg.initData));
 const params = new URLSearchParams(location.search);
 const tgLang = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
 const LANG = I18N[params.get("lang")] ? params.get("lang") : (I18N[tgLang] ? tgLang : "uz");
@@ -529,7 +530,10 @@ function submit(){
   haptic("success");
   const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, dates:state.sorted, days:c.nights.length, pick_time:state.time, ret_time:state.time,
                   delivery:state.delivery, pay:state.pay, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
-  if (inTelegram) tg.sendData(JSON.stringify(order));
+  if (inTelegram) {
+    try { tg.sendData(JSON.stringify(order)); }
+    catch(e) { alert({uz:"Buyurtma yuborilmadi. Bot ichidagi pastki «🎮 Ijaraga olish» tugmasi orqali qayta oching.", ru:"Заказ не отправлен. Откройте заново через нижнюю кнопку «🎮 Арендовать» в боте.", en:"Order not sent. Please reopen via the bottom «🎮 Rent now» button in the bot."}[LANG] || "Error"); }
+  }
   else alert("Brauzerda sinov rejimi. Telegram ichida bu buyurtma botga yuboriladi:\n\n" + JSON.stringify(order, null, 2));
 }
 
