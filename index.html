@@ -42,8 +42,8 @@
   .rates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
   .rate{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:11px 12px}
   .rate small{display:block;color:var(--muted);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-  .rate b{display:block;font-size:15.5px;font-weight:800;margin-top:3px;letter-spacing:-.02em;white-space:nowrap}
-  .rate b em{font-style:normal;color:var(--muted);font-size:12px;font-weight:600}
+  .rate b{display:block;font-size:15.5px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+  .rate b em{display:block;font-style:normal;color:var(--muted);font-size:11.5px;font-weight:600;margin-top:1px}
   .rate.we b{color:var(--gold)}
   .rate.sp{grid-column:1/-1;background:linear-gradient(135deg,rgba(47,140,255,.16),rgba(47,140,255,.06));border-color:rgba(47,140,255,.35)}
   .rate.sp b{color:var(--blue)}
@@ -97,6 +97,11 @@
   .legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
   .hint{font-size:12.5px;color:var(--muted);margin-top:10px}
 
+  /* time */
+  .times{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .time{padding:11px 0;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
+  .time.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 14px rgba(47,140,255,.35)}
+  .tnote{font-size:12.5px;color:var(--muted);margin-top:10px}
   /* form */
   .field{position:relative;margin-bottom:10px}
   .field svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
@@ -183,8 +188,16 @@
   <div class="hint" id="hint"></div>
 </div>
 
+<div class="sec" id="timeSec" style="display:none">
+  <div class="sec-h"><h3><span class="n">2</span><span data-i="sTime"></span></h3></div>
+  <div class="card">
+    <div class="times" id="times"></div>
+    <div class="tnote" id="tnote"></div>
+  </div>
+</div>
+
 <div class="sec">
-  <div class="sec-h"><h3><span class="n">2</span><span data-i="s3"></span></h3></div>
+  <div class="sec-h"><h3><span class="n">3</span><span data-i="s3"></span></h3></div>
   <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" autocomplete="name"></div>
   <div class="field"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><input id="phone" type="tel" placeholder="+998 90 123 45 67" autocomplete="tel"></div>
   <button class="share" id="shareBtn" type="button"></button>
@@ -192,17 +205,22 @@
     <button data-v="pickup" class="active" data-i="pickup"></button>
     <button data-v="delivery" data-i="delivery"></button>
   </div>
+  <div class="seg" id="paySeg">
+    <button data-v="cash" class="active" data-i="payCash"></button>
+    <button data-v="card" data-i="payCard"></button>
+  </div>
   <div class="field" id="addressBox" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12Z"/><circle cx="12" cy="10" r="3"/></svg><input id="address" data-ph="address"></div>
   <div class="field ta"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><textarea id="comment" rows="2" data-ph="comment"></textarea></div>
 </div>
 
 <div class="sec">
-  <div class="sec-h"><h3><span class="n">3</span><span data-i="s4"></span></h3></div>
+  <div class="sec-h"><h3><span class="n">4</span><span data-i="s4"></span></h3></div>
   <div class="card">
     <div class="row"><span data-i="rPick"></span><b id="sPick">—</b></div>
     <div class="row"><span data-i="rRet"></span><b id="sRet">—</b></div>
     <div class="row"><span data-i="rNights"></span><b id="sNights">0</b></div>
     <div class="calc" id="calc" style="display:none"></div>
+    <div class="row"><span data-i="rPay"></span><b id="sPay"></b></div>
     <div class="row" id="sDeliveryRow" style="display:none"><span data-i="rDelivery"></span><b data-i="negotiable"></b></div>
     <div class="row total"><span data-i="rTotal"></span><b id="sTotal">0</b></div>
   </div>
@@ -227,11 +245,11 @@
    Narx va bo'sh vaqtni bot o'zi URL orqali yuboradi (bot.py dagi sozlamalar).
    Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
    O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
-const DEFAULTS = { wd: 280000, we: 350000, sp: "", open: "", monthsAhead: 12, photo: "ps5.jpg" };
+const DEFAULTS = { wd: 280000, we: 350000, sp: "", open: "", monthsAhead: 12, photo: "ps5.jpg", hours: [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23] };
 /* ========================================================== */
 
 const I18N = {
-  uz: { tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
+  uz: { payCash:"💵 Naqd", payCard:"💳 Karta (Click/Payme)", rPay:"To'lov", payNote:"konsolni olganda", sTime:"Olish vaqti", tNote:"↩️ Qaytarish — {d} kuni xuddi shu vaqtda ({h}). 1 sutka = 24 soat.", tNone:"Bu kunlar uchun mos vaqt yo'q — boshqa sanani tanlang", eTime:"Olish vaqtini tanlang", tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
         wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", perDay:"/ sutka", chips:["2 ta pult","Mashhur o'yinlar","HDMI kabel","Tekshirilgan"],
         freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Sanani tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
         lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Dam olish kuni",
@@ -245,7 +263,7 @@ const I18N = {
         btnPick:"Olish kunini tanlang", btnEnd:"Qaytarish kunini tanlang", btnOrder:"Buyurtma berish",
         eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
         months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
-  ru: { tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
+  ru: { payCash:"💵 Наличные", payCard:"💳 Карта (Click/Payme)", rPay:"Оплата", payNote:"при получении", sTime:"Время получения", tNote:"↩️ Возврат — {d} в это же время ({h}). 1 сутки = 24 часа.", tNone:"Для этих дат нет подходящего времени — выберите другие", eTime:"Выберите время получения", tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
         wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", perDay:"/ сутки", chips:["2 геймпада","Топовые игры","HDMI кабель","Проверена"],
         freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
         lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Выходной",
@@ -259,7 +277,7 @@ const I18N = {
         btnPick:"Выберите день получения", btnEnd:"Выберите день возврата", btnOrder:"Оформить заказ",
         eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
         months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
-  en: { tagline:"PS5 rental in Tashkent — daily, easy and fast", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
+  en: { payCash:"💵 Cash", payCard:"💳 Card (Click/Payme)", rPay:"Payment", payNote:"at pickup", sTime:"Pickup time", tNote:"↩️ Return — {d} at the same time ({h}). 1 day = 24 hours.", tNone:"No suitable time for these dates — pick other dates", eTime:"Pick a pickup time", tagline:"PS5 rental in Tashkent — daily, easy and fast", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
         wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", perDay:"/ day", chips:["2 controllers","Top games","HDMI cable","Checked"],
         freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
         lFree:"Free", lBusy:"Booked", lSel:"Selected", lWe:"Weekend",
@@ -329,7 +347,7 @@ const isWeekend = d => [0,6].includes(parseIso(d).getDay());
 const nightFree = d => d >= TODAY && !booked.has(d) && !(OPEN && (d < OPEN.from || d >= OPEN.to));
 
 const firstFree = (() => { for (let i=0;i<400;i++){ const d = addDays(TODAY,i); if (nightFree(d)) return d; } return null; })();
-const state = { start:null, end:null, delivery:"pickup",
+const state = { start:null, end:null, time:null, delivery:"pickup", pay:"cash",
   view: firstFree ? new Date(parseIso(firstFree).getFullYear(), parseIso(firstFree).getMonth(), 1) : new Date(today.getFullYear(), today.getMonth(), 1) };
 
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600); haptic("warning"); }
@@ -411,7 +429,7 @@ function pickDay(s){
     if (returnable(state.start).has(s)) state.end = s;
     else { toast(L.eRange); if (nightFree(s)) { state.start = s; state.end = null; } }
   }
-  renderCalendar(); renderSummary();
+  renderCalendar(); renderTimes(); renderSummary();
 }
 
 function calc(){
@@ -422,6 +440,26 @@ function calc(){
   return { nights:n, total:n.reduce((a,d)=>a+priceOf(d),0), groups:Object.values(groups) };
 }
 
+function validTimes(){
+  if (!state.start || !state.end) return [];
+  const nowH = new Date().getHours();
+  return DEFAULTS.hours.map(h => pad(h)+":00").filter(t => {
+    if (OPEN && state.start === OPEN.from && t < OPEN.fromT) return false;
+    if (OPEN && state.end === OPEN.to && t > OPEN.toT) return false;
+    if (state.start === TODAY && +t.slice(0,2) <= nowH) return false;
+    return true;
+  });
+}
+function renderTimes(){
+  const sec = $("timeSec");
+  if (!state.start || !state.end) { sec.style.display = "none"; state.time = null; return; }
+  sec.style.display = "";
+  const ts = validTimes();
+  if (!ts.includes(state.time)) state.time = ts[0] || null;
+  $("times").innerHTML = ts.map(t => `<button class="time ${t===state.time?"on":""}" data-t="${t}">${t}</button>`).join("");
+  document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); });
+  $("tnote").textContent = ts.length ? L.tNote.replace("{d}", human(state.end).split(",")[0]).replace("{h}", state.time) : L.tNone;
+}
 function timeFor(date, edge){
   const t = (word, hm) => LANG === "uz" ? `${hm} ${word}` : `${word} ${hm}`;
   if (OPEN && edge==="start" && date === OPEN.from) return "· " + t(L.from, OPEN.fromT);
@@ -431,34 +469,37 @@ function timeFor(date, edge){
 
 function renderSummary(){
   const c = calc();
-  $("sPick").textContent = state.start ? `${human(state.start)} ${timeFor(state.start,"start")}`.trim() : "—";
-  $("sRet").textContent = state.end ? `${human(state.end)} ${timeFor(state.end,"end")}`.trim() : "—";
+  $("sPick").textContent = state.start ? `${human(state.start)}${state.end && state.time ? " · " + state.time : ""}` : "—";
+  $("sRet").textContent = state.end ? `${human(state.end)}${state.time ? " · " + state.time : ""}` : "—";
   $("sNights").textContent = c.nights.length + " " + L.nights;
   if (c.nights.length) {
     $("calc").style.display = "block";
     $("calc").innerHTML = c.groups.map(g => `<div><span>${g.c} × ${fmt(g.p)} <small style="color:var(--muted)">(${g.k==="sp"?"⭐ "+L.sp:(g.k==="we"?L.we:L.wd)})</small></span><span>${fmt(g.c*g.p)}</span></div>`).join("");
   } else $("calc").style.display = "none";
+  $("sPay").textContent = (state.pay==="cash" ? L.payCash : L.payCard) + " · " + L.payNote;
   $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
   $("sTotal").textContent = fmt(c.total);
-  const label = c.nights.length ? `${L.btnOrder}  •  ${fmt(c.total)}` : (state.start ? L.btnEnd : L.btnPick);
+  const ready = c.nights.length && state.time;
+  const label = ready ? `${L.btnOrder}  •  ${fmt(c.total)}` : (c.nights.length ? L.eTime : (state.start ? L.btnEnd : L.btnPick));
   if (inTelegram) {
     tg.MainButton.setText(label);
-    if (c.nights.length) { tg.MainButton.enable(); tg.MainButton.color = "#2f8cff"; tg.MainButton.textColor = "#ffffff"; }
+    if (ready) { tg.MainButton.enable(); tg.MainButton.color = "#2f8cff"; tg.MainButton.textColor = "#ffffff"; }
     else { tg.MainButton.disable(); tg.MainButton.color = "#252b38"; tg.MainButton.textColor = "#6b7488"; }
     tg.MainButton.show();
-  } else { $("bar").style.display = "block"; $("fallbackBtn").textContent = label; $("fallbackBtn").disabled = !c.nights.length; }
+  } else { $("bar").style.display = "block"; $("fallbackBtn").textContent = label; $("fallbackBtn").disabled = !ready; }
 }
 
 function submit(){
   const c = calc();
   const name = $("name").value.trim(), phone = $("phone").value.trim(), address = $("address").value.trim();
   if (!c.nights.length) return toast(L.eDays);
+  if (!state.time) return toast(L.eTime);
   if (name.length < 2) { $("name").focus(); return toast(L.eName); }
   if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast(L.ePhone); }
   if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast(L.eAddr); }
   haptic("success");
-  const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, days:c.nights.length,
-                  delivery:state.delivery, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
+  const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, days:c.nights.length, pick_time:state.time, ret_time:state.time,
+                  delivery:state.delivery, pay:state.pay, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
   if (inTelegram) tg.sendData(JSON.stringify(order));
   else alert("Brauzerda sinov rejimi. Telegram ichida bu buyurtma botga yuboriladi:\n\n" + JSON.stringify(order, null, 2));
 }
@@ -472,6 +513,10 @@ document.querySelectorAll("#deliverySeg button").forEach(b => b.onclick = () => 
   state.delivery = b.dataset.v; $("addressBox").style.display = state.delivery==="delivery" ? "" : "none"; renderSummary();
 });
 $("fallbackBtn").onclick = submit;
+document.querySelectorAll("#paySeg button").forEach(b => b.onclick = () => {
+  haptic("sel"); document.querySelectorAll("#paySeg button").forEach(x => x.classList.toggle("active", x===b));
+  state.pay = b.dataset.v; renderSummary();
+});
 ["channelCard","chTop"].forEach(id => $(id).onclick = e => { if (inTelegram && tg.openTelegramLink) { e.preventDefault(); tg.openTelegramLink("https://t.me/ps_5_gta_6"); } });
 
 const shareBtn = $("shareBtn");
