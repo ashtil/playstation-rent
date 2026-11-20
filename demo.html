@@ -171,6 +171,49 @@
   .bar button:disabled{background:var(--card3);color:var(--dim);box-shadow:none}
   .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-140%);visibility:hidden;background:#1f2430;border:1px solid var(--line);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;z-index:9;max-width:90%;transition:transform .25s}
   .toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+
+  /* ================= DEMO: 3D, aniq (vektor) va jonli dizayn ================= */
+  html{scroll-behavior:smooth}
+  /* Logo: "rent" — jiddiy metall mis rangi, qora fonda ham, oq PLAY yonida ham ajralib turadi */
+  .head h1 span{background:linear-gradient(180deg,#ffdcae 0%,#e9a564 36%,#bb6a2f 68%,#8c4519 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:none;font-weight:800;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(233,165,100,.28))}
+  /* GTA 6: ixcham banner, sayt ochilganda birinchi ko'rinadi */
+  .gta{margin:14px 16px 0;aspect-ratio:auto;height:92px;display:flex;align-items:center;border-radius:18px;
+    background:linear-gradient(90deg,rgba(22,6,40,.94) 0%,rgba(22,6,40,.62) 42%,rgba(22,6,40,0) 72%),#2a0a4a url("gta6_banner.jpg") 100% 26%/150% auto no-repeat;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px rgba(170,60,160,.35),0 2px 6px rgba(0,0,0,.35)}
+  .gta::after{display:none}
+  .gta b{position:relative;right:auto;bottom:auto;margin-left:18px;padding:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+    font-size:22px;font-weight:800;letter-spacing:-.02em;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+  /* Kartochkalar: chuqurlik */
+  .product,.card{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 40px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3)}
+  .rate{background:linear-gradient(180deg,#21262f,#181c24);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 10px rgba(0,0,0,.3)}
+  .chip{background:linear-gradient(180deg,#242936,#1a1e28);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 2px 6px rgba(0,0,0,.3)}
+  /* Bosiladigan elementlar: ko'tarilgan 3D, bosilganda "botadi" */
+  .day.free,.day.sel,.time,.seg button,.nav,.chbtn,.channel,.bar button,.share{transition:transform .13s ease,box-shadow .13s ease,background .2s ease}
+  .day.free{background:linear-gradient(180deg,#272d3b,#191d27);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -2px 0 rgba(0,0,0,.35),0 3px 7px rgba(0,0,0,.38)}
+  .day.sel{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.18),0 0 0 2px rgba(255,255,255,.5),0 8px 20px rgba(10,132,255,.45)}
+  .day.free:active,.day.sel:active,.time:active,.seg button:active,.nav:active,.chbtn:active,.channel:active,.bar button:active,.share:active{transform:translateY(2px) scale(.97);box-shadow:inset 0 2px 5px rgba(0,0,0,.5)}
+  /* Band kunlar: botib turgan (ichkariga) katak + kichik aniq qulf belgisi */
+  .day.busy{background:#0c0f14;color:rgba(255,255,255,.2);box-shadow:inset 0 2px 7px rgba(0,0,0,.8),inset 0 -1px 0 rgba(255,255,255,.035);padding-bottom:9px}
+  .day.busy::after{inset:auto;left:50%;top:auto;bottom:7px;transform:translateX(-50%);width:10px;height:10px;border-radius:0;filter:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-opacity='.42' stroke-width='2.2' stroke-linecap='round'><rect x='5' y='11' width='14' height='10' rx='2.5'/><path d='M8 11V8a4 4 0 0 1 8 0v3'/></svg>") center/contain no-repeat}
+  .time{background:linear-gradient(180deg,#262b38,#1a1e28);border-color:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 6px rgba(0,0,0,.35)}
+  .time.on{background:linear-gradient(180deg,#ffffff,#dde2ea);border-color:#fff;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12),0 5px 14px rgba(255,255,255,.14)}
+  .seg{box-shadow:inset 0 2px 7px rgba(0,0,0,.55)}
+  .seg button.active{background:linear-gradient(180deg,#ffffff,#e1e5ec);box-shadow:inset 0 -2px 0 rgba(0,0,0,.1),0 3px 9px rgba(0,0,0,.38)}
+  .nav{background:linear-gradient(180deg,#272d3b,#1a1e28);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 7px rgba(0,0,0,.38)}
+  .chbtn{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.3)}
+  .channel{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 16px rgba(0,0,0,.35)}
+  .bar button{background:linear-gradient(180deg,#2f8eff,#0060c8);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.2),0 10px 26px rgba(47,140,255,.4)}
+  .bar button:disabled{background:linear-gradient(180deg,#2a303d,#20252f);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+  /* O'tish animatsiyalari */
+  @keyframes slideL{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+  @keyframes slideR{from{transform:translateX(-32px);opacity:0}to{transform:none;opacity:1}}
+  .grid.slideL{animation:slideL .3s cubic-bezier(.2,.8,.2,1)}
+  .grid.slideR{animation:slideR .3s cubic-bezier(.2,.8,.2,1)}
+  @keyframes flash{0%{box-shadow:0 0 0 0 rgba(47,142,255,0)}25%{box-shadow:0 0 0 3px rgba(47,142,255,.6),0 0 30px rgba(47,142,255,.35)}100%{box-shadow:0 0 0 0 rgba(47,142,255,0)}}
+  .sec.flash{animation:flash 1.2s ease;border-radius:18px}
+  .legend i.lk{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-opacity='.6' stroke-width='2.4' stroke-linecap='round'><rect x='5' y='11' width='14' height='10' rx='2.5'/><path d='M8 11V8a4 4 0 0 1 8 0v3'/></svg>") center/8px no-repeat,#0c0f14;box-shadow:inset 0 2px 4px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,255,255,.08)}
+  @media (prefers-reduced-motion:reduce){.grid.slideL,.grid.slideR,.sec.flash{animation:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
@@ -184,6 +227,8 @@
   <a class="chbtn" id="chTop" href="https://t.me/ps_5_gta_6" target="_blank">📢 <span data-i="chShort"></span></a>
 </div>
 
+<div class="gta" role="img" aria-label="GTA 6"><b data-i="gtaT"></b></div>
+
 <div class="product">
   <div class="photo" id="photo">
     <div class="pill" id="pill"><i></i><span id="pillTxt"></span></div>
@@ -192,7 +237,6 @@
   <div class="pbody">
     <h2>PlayStation 5 Slim Digital</h2>
     <div class="sub" data-i="sub"></div>
-    <div class="gta" role="img" aria-label="GTA 6"><b data-i="gtaT"></b></div>
     <div class="rates" id="rates"></div>
     <div class="chips" id="chips"></div>
   </div>
@@ -213,8 +257,8 @@
     </div>
     <div class="grid" id="grid"></div>
     <div class="legend">
-      <span><i style="background:#191d27;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)"></i><span data-i="lFree"></span></span>
-      <span><i style="background:linear-gradient(to top right,transparent calc(50% - .7px),rgba(255,138,160,.85) calc(50% - .7px),rgba(255,138,160,.85) calc(50% + .7px),transparent calc(50% + .7px)),#13161d;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)"></i><span data-i="lBusy"></span></span>
+      <span><i style="background:linear-gradient(180deg,#2c3342,#1b1f29);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 2px 4px rgba(0,0,0,.4)"></i><span data-i="lFree"></span></span>
+      <span><i class="lk"></i><span data-i="lBusy"></span></span>
       <span><i style="background:#2b95ff;box-shadow:0 0 0 1.5px rgba(255,255,255,.55)"></i><span data-i="lSel"></span></span>
     </div>
   </div>
@@ -229,7 +273,7 @@
   </div>
 </div>
 
-<div class="sec">
+<div class="sec" id="secInfo">
   <div class="sec-h"><h3><span class="n">3</span><span data-i="s3"></span></h3></div>
   <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" autocomplete="name"></div>
   <div class="field"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><input id="phone" type="tel" placeholder="+998 90 123 45 67" autocomplete="tel"></div>
@@ -540,7 +584,7 @@ function renderTimes(){
     if (!items.length) return "";
     return `<div class="tgrp" style="grid-column:1/-1">${L.period[i]}</div>` + items.map(t => `<button class="time ${t===state.time?"on":""}" data-t="${t}">${t}</button>`).join("");
   }).join("");
-  document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); });
+  document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); goNext("secInfo"); });
   $("tnote").textContent = ts.length ? L.tNote.replace("{d}", blocks().map(b => human(b.to).split(",")[0]).join(", ")).replace("{h}", state.time) : L.tNone;
 }
 function renderSummary(){
@@ -589,8 +633,11 @@ function submit(){
 }
 
 /* ---------- hodisalar ---------- */
-$("prev").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()-1, 1); renderCalendar(); };
-$("next").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()+1, 1); renderCalendar(); };
+function slide(cls){ const g = $("grid"); g.classList.remove("slideL","slideR"); void g.offsetWidth; g.classList.add(cls); }
+$("prev").onclick = () => { haptic("sel"); state.view = new Date(state.view.getFullYear(), state.view.getMonth()-1, 1); renderCalendar(); slide("slideR"); };
+$("next").onclick = () => { haptic("sel"); state.view = new Date(state.view.getFullYear(), state.view.getMonth()+1, 1); renderCalendar(); slide("slideL"); };
+// Keyingi qadamga silliq o'tish va bo'limni qisqa yoritish
+function goNext(id){ const el = $(id); if (!el) return; setTimeout(() => { el.scrollIntoView({behavior:"smooth", block:"start"}); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }, 180); }
 document.querySelectorAll("#deliverySeg button").forEach(b => b.onclick = () => {
   haptic("sel");
   document.querySelectorAll("#deliverySeg button").forEach(x => x.classList.toggle("active", x===b));
