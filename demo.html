@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>PlayRent — narx demo</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d12; --card:#151922; --card2:#1c212c; --card3:#252b38; --line:rgba(255,255,255,.07);
+    --text:#f4f6fa; --muted:#8c95a8; --dim:#4c5467;
+    --blue:#0070d1; --blue2:#005bb5; --ok:#22c38e; --sel:#0a84ff; --tierL:#c3cad6; --tierM:#7d8798; --tierD:#343b48; --bad:#ff4d5e; --gold:#ffb547;
+    --light:#f2f3f7;
+  }
+  *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+  html{background:#07090c}
+  html{background:radial-gradient(55% 35% at 15% 8%,rgba(64,48,160,.42),transparent 70%),radial-gradient(50% 32% at 88% 18%,rgba(0,112,209,.35),transparent 70%),radial-gradient(60% 40% at 60% 55%,rgba(20,28,60,.6),transparent 75%),radial-gradient(65% 40% at 96% 78%,rgba(160,72,40,.55),transparent 70%),radial-gradient(50% 30% at 75% 92%,rgba(125,55,35,.35),transparent 72%),#06070b;background-attachment:fixed;min-height:100%}
+  body{background:transparent}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:linear-gradient(180deg,transparent 0%,rgba(6,7,11,.25) 50%,rgba(6,7,11,.15) 100%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+  body > *{position:relative;z-index:1}
+  body{color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+  button{font-family:inherit}
+  .wrap{padding:0 16px}
+
+  /* header */
+  .head{padding:18px 16px 4px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .head h1{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+  .head h1{color:#fff;font-weight:700;letter-spacing:-.01em}
+  .head h1 span{color:#8b3a0b;font-weight:800;letter-spacing:-.02em;text-shadow:0 0 14px rgba(139,58,11,.45)}
+  .head p{color:#c3c9d4}
+  .head p{color:var(--muted);font-size:13.5px;margin-top:4px}
+  .chbtn{flex:none;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);color:var(--text);padding:8px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none}
+
+  /* product card (light photo area like a store) */
+  .product{margin:18px 16px 0;border-radius:20px;overflow:hidden;background:#15181e;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+  .photo{position:relative;height:300px;background:linear-gradient(180deg,#dcdeeb 0%,#e3e5f2 60%,#e8eaf6 100%);display:grid;place-items:center;overflow:hidden}
+  .photo::after{display:none;content:"";position:absolute;left:15%;right:15%;bottom:16px;height:18px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);filter:blur(2px)}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%}
+  .photo svg{width:76%;max-width:310px;filter:drop-shadow(0 26px 26px rgba(8,22,60,.40))}
+  .pill{position:absolute;top:14px;left:14px;z-index:2;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:7px 11px;border-radius:999px;background:#fff;color:#16181d;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .pill i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(34,195,142,.2)}
+  .pill.busy i{background:var(--bad);box-shadow:0 0 0 3px rgba(255,77,94,.2)}
+  .tag{position:absolute;top:14px;right:14px;z-index:2;font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.75);color:#fff}
+  .pbody{padding:16px 18px 18px}
+  .pbody h2{font-size:21px;font-weight:800;letter-spacing:-.02em}
+  .pbody .sub{color:var(--muted);font-size:13.5px;margin-top:2px}
+  .rates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+  .rate{background:#1c2028;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px 12px}
+  .rate small{display:block;color:var(--muted);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .rate b{display:block;font-size:15.5px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+  .rate b em{display:block;font-style:normal;color:var(--muted);font-size:11.5px;font-weight:600;margin-top:1px}
+  .rate.we b{color:#fff}
+  .rate.sp{grid-column:1/-1;background:#0070d1;border-color:#0070d1}
+  .rate.sp small,.rate.sp b,.rate.sp b em{color:#fff}
+  .gta{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#ff2e88 0%,#ff7a3d 55%,#ffb547 100%);color:#fff;box-shadow:0 10px 28px rgba(255,80,110,.28)}
+  .gta .gt{flex:none;font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1;padding:7px 9px;border-radius:10px;background:rgba(0,0,0,.28)}
+  .gta b{display:block;font-size:14.5px;font-weight:800}
+  .gta small{display:block;font-size:12px;opacity:.92}
+  .chip.hot{color:#fff;background:linear-gradient(135deg,#ff2e88,#ff7a3d);border-color:transparent}
+  .avail .hrs{display:block;font-size:12.5px;color:#c7cedb;margin-top:3px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{font-size:12px;font-weight:600;color:#c7cedb;background:var(--card2);border:1px solid var(--line);padding:6px 10px;border-radius:10px}
+
+  /* availability */
+  .avail{margin:12px 16px 0;display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:16px;background:rgba(34,195,142,.08);border:1px solid rgba(34,195,142,.28)}
+  .avail .ic{width:36px;height:36px;border-radius:11px;background:rgba(34,195,142,.16);display:grid;place-items:center;font-size:17px;flex:none}
+  .avail small{display:block;color:var(--muted);font-size:12px}
+  .avail b{font-size:14.5px}
+
+  /* sections */
+  .sec{margin:22px 16px 0}
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .sec-h h3{font-size:17px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  .sec-h h3 .n{width:22px;height:22px;border-radius:50%;background:#fff;color:#0b0d11!important;color:#fff;font-size:12px;display:grid;place-items:center}
+  .card{background:#15181e;border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:14px;backdrop-filter:blur(6px)}
+
+  /* calendar */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .cal-head b{font-size:16px;font-weight:800}
+  .nav{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:18px;cursor:pointer}
+  .nav:disabled{opacity:.25}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .dow{text-align:center;font-size:11px;font-weight:700;color:var(--dim);padding:2px 0 6px;text-transform:uppercase}
+  .dow.we{color:#8a6a35}
+  #pill,.photo .tag{display:none!important}
+  .day{position:relative;height:50px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14.5px;cursor:pointer;transition:transform .1s,background .15s}
+  .day:active{transform:scale(.93)}
+  .day .pr{font-size:9.5px;font-weight:600;color:var(--muted);margin-top:1px;letter-spacing:-.01em}
+  .day.free{background:var(--card2)}
+  .day.free{background:linear-gradient(180deg,#191d27,#13171f);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+  .day .pr{display:none!important}
+  .day.free .pr{font-size:11.5px;font-weight:800;letter-spacing:.03em;-webkit-text-stroke:2.2px #fff;paint-order:stroke fill;margin-top:2px}
+  .day.free.t0 .pr{color:#8a5a2b}
+  .day.free.t1 .pr{color:#5b4a8a}
+  .day.free.t2 .pr{color:#1d4fb8}
+  .day.free.wkend .pr{}
+  .day.free.spc .pr{}
+  .day.past{color:#2c3240;cursor:default}
+  .day.flip{animation:flipOn .27s cubic-bezier(.22,.9,.3,1.15) both}
+  .day.unflip{animation:flipOff .22s cubic-bezier(.22,.9,.3,1) both}
+  @keyframes flipOn{0%{transform:perspective(420px) rotateY(-100deg) scale(.92);filter:brightness(.6)}60%{filter:brightness(1.13)}100%{transform:perspective(420px) rotateY(0) scale(1);filter:brightness(1)}}
+  @keyframes flipOff{0%{transform:perspective(420px) rotateY(100deg) scale(.95)}100%{transform:perspective(420px) rotateY(0) scale(1)}}
+  .day.busy{background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 1px,transparent 1px 6px),linear-gradient(180deg,#1d1216,#140e11);color:rgba(255,255,255,.22);cursor:not-allowed;box-shadow:inset 0 0 0 1px rgba(214,86,98,.28)}
+  .day.busy::after{content:"";position:absolute;width:18px;height:18px;left:50%;top:50%;transform:translate(-50%,-50%);background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M3.5 3.5l11 11M14.5 3.5l-11 11' stroke='%23e0626e' stroke-width='1.6' stroke-linecap='round'/></svg>") center/contain no-repeat;filter:drop-shadow(0 0 4px rgba(224,98,110,.55))}
+  .day.busy .pr{display:none}
+  .day.ret{background:var(--card2);color:var(--text);outline:1.5px dashed rgba(47,140,255,.6);outline-offset:-2px}
+  .day.ret::after{display:none}
+  .day.ret .pr{display:block;color:var(--blue)}
+  .day.inr{background:rgba(10,132,255,.85);color:#fff;border-radius:6px}
+  .day.inr .pr{color:#e3fff4}
+  .day.sel{background:linear-gradient(180deg,#2b95ff,#0a6fe0);color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.55),0 6px 18px rgba(10,132,255,.41)}
+  .day.sel::after{content:"✓";position:absolute;top:3px;right:5px;font-size:9px;font-weight:800;color:rgba(255,255,255,.55)}
+  .day.sel .pr{color:#e3fff4}
+  .day.ret{background:transparent!important;color:var(--sel)!important;outline:1.5px dashed rgba(10,132,255,.75);outline-offset:-3px}
+  .day.ret::after{display:none}
+  .day.ret .pr{display:block;color:var(--sel)}
+  .day.today::before{content:"";position:absolute;top:5px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--blue)}
+  .day.sel.today::before{background:#fff}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:11.5px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:10px}
+
+  /* time */
+  .times{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .time{padding:11px 0;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
+  .time.on{background:#fff;border-color:#fff;color:#0b0d11;box-shadow:none}
+  .tgrp{font-size:12px;font-weight:700;color:var(--muted);margin:10px 0 6px}
+  .tgrp:first-child{margin-top:0}
+  .tnote{font-size:12.5px;color:var(--muted);margin-top:10px}
+  /* form */
+  .field{position:relative;margin-bottom:10px}
+  .field svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
+  .field.ta svg{top:19px;transform:none}
+  .field input,.field textarea{width:100%;background:var(--card);border:1.5px solid var(--line);color:var(--text);border-radius:14px;padding:14px 14px 14px 44px;font-size:15px;outline:none;font-family:inherit}
+  .field textarea{resize:none}
+  .field input::placeholder,.field textarea::placeholder{color:var(--dim)}
+  .field input:focus,.field textarea:focus{border-color:var(--blue)}
+  .share{width:100%;display:none;align-items:center;justify-content:center;gap:8px;margin:-2px 0 10px;padding:12px;border-radius:14px;border:1.5px dashed rgba(47,140,255,.5);background:rgba(47,140,255,.08);color:var(--blue);font-size:14px;font-weight:700;cursor:pointer}
+  .share.done{border-style:solid;border-color:rgba(34,195,142,.4);background:rgba(34,195,142,.1);color:var(--ok)}
+  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;margin-bottom:10px}
+  .seg button{border:0;background:transparent;color:var(--muted);padding:11px 6px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer}
+  .seg button.active{background:#fff;color:#0b0d11}
+
+  /* summary */
+  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0;color:var(--muted);font-size:14px}
+  .row b{color:var(--text);font-weight:700;text-align:right}
+  .calc{margin:8px 0 2px;padding:10px 12px;border-radius:12px;background:var(--card2);font-size:13px;color:#c7cedb;font-variant-numeric:tabular-nums}
+  .calc div{display:flex;justify-content:space-between;padding:3px 0}
+  .calc div span:last-child{font-weight:700;color:var(--text)}
+  .total{border-top:1px dashed rgba(255,255,255,.12);margin-top:8px;padding-top:12px}
+  .total span{color:var(--text);font-weight:700;font-size:16px}
+  .total b{font-size:23px;font-weight:800;color:var(--blue);letter-spacing:-.02em}
+  .channel{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;cursor:pointer}
+  .channel .ic{width:42px;height:42px;border-radius:50%;background:#0070d1;display:grid;place-items:center;font-size:19px;flex:none}
+  .channel b{display:block;font-size:14px}.channel small{color:var(--muted);font-size:12px}
+  .channel .go{margin-left:auto;color:var(--muted);font-size:22px}
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .trust div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;font-size:11px;color:var(--muted);font-weight:600}
+  .trust div b{display:block;font-size:18px;margin-bottom:4px}
+  .rules{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7;padding:0 4px}
+
+  .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 65%,transparent);display:none;z-index:5}
+  .bar button{width:100%;padding:17px;border:0;border-radius:999px;background:#0070d1;letter-spacing:.01em;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(47,140,255,.35)}
+  .bar button:disabled{background:var(--card3);color:var(--dim);box-shadow:none}
+  .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-140%);visibility:hidden;background:#1f2430;border:1px solid var(--line);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;z-index:9;max-width:90%;transition:transform .25s}
+  .toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+</style>
+</head>
+<body>
+
+<div style="margin:12px 16px 0;padding:10px 14px;border-radius:12px;background:#ffb547;color:#1a1200;font-weight:700;font-size:13.5px">🧪 DEMO — yangi narxlar sinovi. Buyurtma yuborilmaydi, faqat hisoblab ko'rsatadi.</div>
+<div class="head">
+  <div>
+    <h1>PLAY<span>rent</span></h1>
+    <p data-i="tagline"></p>
+  </div>
+  <a class="chbtn" id="chTop" href="https://t.me/ps_5_gta_6" target="_blank">📢 <span data-i="chShort"></span></a>
+</div>
+
+<div class="product">
+  <div class="photo" id="photo">
+    <div class="pill" id="pill"><i></i><span id="pillTxt"></span></div>
+    <div class="tag">4K · 120 FPS</div>
+  </div>
+  <div class="pbody">
+    <h2>PlayStation 5 Slim Digital</h2>
+    <div class="sub" data-i="sub"></div>
+    <div class="gta"><div class="gt">GTA VI</div><div><b data-i="gtaT"></b><small data-i="gtaS"></small></div></div>
+    <div class="rates" id="rates"></div>
+    <div class="chips" id="chips"></div>
+  </div>
+</div>
+
+<div class="avail" id="avail" style="display:none">
+  <div class="ic">🟢</div>
+  <div><small data-i="availTitle"></small><b id="availTxt"></b><span class="hrs" id="availHrs"></span></div>
+</div>
+
+<div class="sec">
+  <div class="sec-h"><h3><span class="n">1</span><span data-i="s1"></span></h3></div>
+  <div class="card">
+    <div class="cal-head">
+      <button class="nav" id="prev">‹</button>
+      <b id="monthTitle"></b>
+      <button class="nav" id="next">›</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="legend">
+      <span><i style="background:#191d27;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)"></i><span data-i="lFree"></span></span>
+      <span><i style="background:#2a1a20;box-shadow:inset 0 0 0 1px rgba(214,86,98,.6)"></i><span data-i="lBusy"></span></span>
+      <span><i style="background:#2b95ff;box-shadow:0 0 0 1.5px rgba(255,255,255,.55)"></i><span data-i="lSel"></span></span>
+    </div>
+  </div>
+  <div class="hint" id="hint"></div>
+</div>
+
+<div class="sec" id="timeSec" style="display:none">
+  <div class="sec-h"><h3><span class="n">2</span><span data-i="sTime"></span></h3></div>
+  <div class="card">
+    <div class="times" id="times"></div>
+    <div class="tnote" id="tnote"></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-h"><h3><span class="n">3</span><span data-i="s3"></span></h3></div>
+  <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" autocomplete="name"></div>
+  <div class="field"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><input id="phone" type="tel" placeholder="+998 90 123 45 67" autocomplete="tel"></div>
+  <button class="share" id="shareBtn" type="button"></button>
+  <div class="seg" id="deliverySeg">
+    <button data-v="pickup" class="active" data-i="pickup"></button>
+    <button data-v="delivery" data-i="delivery"></button>
+  </div>
+  <div class="seg" id="paySeg">
+    <button data-v="cash" class="active" data-i="payCash"></button>
+    <button data-v="card" data-i="payCard"></button>
+  </div>
+  <div class="field" id="addressBox" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12Z"/><circle cx="12" cy="10" r="3"/></svg><input id="address" data-ph="address"></div>
+  <div class="field ta"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><textarea id="comment" rows="2" data-ph="comment"></textarea></div>
+</div>
+
+<div class="sec">
+  <div class="sec-h"><h3><span class="n">4</span><span data-i="s4"></span></h3></div>
+  <div class="card">
+    <div class="row"><span data-i="rPick"></span><b id="sPick">—</b></div>
+    <div class="row"><span data-i="rRet"></span><b id="sRet">—</b></div>
+    <div class="row"><span data-i="rNights"></span><b id="sNights">0</b></div>
+    <div class="calc" id="calc" style="display:none"></div>
+    <div class="row"><span data-i="rPay"></span><b id="sPay"></b></div>
+    <div class="row" id="sDeliveryRow" style="display:none"><span data-i="rDelivery"></span><b data-i="negotiable"></b></div>
+    <div class="row total"><span data-i="rTotal"></span><b id="sTotal">0</b></div>
+  </div>
+  <a class="channel" id="channelCard" href="https://t.me/ps_5_gta_6" target="_blank">
+    <div class="ic">📢</div>
+    <div><b>@ps_5_gta_6</b><small data-i="chSub"></small></div>
+    <div class="go">›</div>
+  </a>
+  <div class="trust">
+    <div><b>🛡</b><span data-i="t1"></span></div>
+    <div><b>⚡</b><span data-i="t2"></span></div>
+    <div><b>🎮</b><span data-i="t3"></span></div>
+  </div>
+  <div class="rules" data-html="rules"></div>
+</div>
+
+<div class="bar" id="bar"><button id="fallbackBtn"></button></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======================= SOZLAMALAR =======================
+   Narx va bo'sh vaqtni bot o'zi URL orqali yuboradi (bot.py dagi sozlamalar).
+   Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
+   O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
+const DEFAULTS = { wd: 280000, we: 300000, sp: "",
+  open: "2026-11-24T18:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-25T20:00",
+  monthsAhead: 12, photo: "ps5_hd.jpg", hours: [18,19,20],
+  blocked: ["2026-11-23","2026-11-26","2026-11-27","2026-11-28","2026-11-29","2026-11-30","2026-12-01","2026-12-02"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
+/* ========================================================== */
+
+const I18N = {
+  uz: { payCash:"💵 Naqd", payCard:"💳 Karta (Click/Payme)", rPay:"To'lov", payNote:"konsolni olganda", sTime:"Olish vaqti", tNote:"↩️ Qaytarish — {d}, soat {h} (har bir kun = 24 soat).", tNone:"Bu kunlar uchun mos vaqt yo'q — boshqa sanani tanlang", eTime:"Olish vaqtini tanlang", tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", gtaT:"GTA 6 bor! 🔥", gtaS:"Konsolda o'rnatilgan — birinchilardan bo'lib o'ynang", hrsLbl:"🌙 Olib ketish / qaytarish: ", eveOnly:"Hozircha faqat kechqurun", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
+        wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", perDay:"/ sutka", chips:["🔥 GTA 6","PS Plus Deluxe","2 ta pult","Mashhur o'yinlar","HDMI kabel","Tekshirilgan"],
+        freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Kunlarni tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
+        lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Qimmatroq",
+        hint0:"👆 Kerakli kunlarni bosing — har bir bosilgan kun ko'k bo'ladi", hint1:"✅ Yana kun qo'shish uchun bosing. Bekor qilish uchun ko'k kunni qayta bosing", hint2:"", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
+        name:"Ism va familiya", address:"Manzil: tuman, ko'cha, mo'ljal", comment:"Izoh: qaysi o'yinlar kerak, vaqt…",
+        share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish",
+        rPick:"Olish", rRet:"Qaytarish", rNights:"Kunlar", rDelivery:"Yetkazib berish", negotiable:"kelishiladi", rTotal:"Jami", dFriend:"🎁 Do'st chegirmasi", dBonus:"🎁 Bonus", dHint:"🎁 Chegirma/bonus Du–Pa kechalariga ishlaydi",
+        chSub:"Yangiliklar, chegirmalar va bo'sh kunlar", t1:"Tekshirilgan konsol", t2:"Tez tasdiqlash", t3:"O'yinlar o'rnatilgan",
+        rules:"• 1 sutka = 24 soat. Narx sutka boshlangan kunga qarab hisoblanadi.<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
+        nights:"kun", som:"so'm", from:"dan", until:"gacha", agreed:"kelishiladi",
+        btnPick:"Olish kunini tanlang", btnEnd:"Qaytarish kunini tanlang", btnOrder:"Buyurtma berish",
+        eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
+        months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
+  ru: { payCash:"💵 Наличные", payCard:"💳 Карта (Click/Payme)", rPay:"Оплата", payNote:"при получении", sTime:"Время получения", tNote:"↩️ Возврат — {d}, в {h} (каждый день = 24 часа).", tNone:"Для этих дат нет подходящего времени — выберите другие", eTime:"Выберите время получения", tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", gtaT:"Есть GTA 6! 🔥", gtaS:"Уже установлена — играйте одними из первых", hrsLbl:"🌙 Получение / возврат: ", eveOnly:"Пока только вечером", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
+        wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", perDay:"/ сутки", chips:["🔥 GTA 6","PS Plus Deluxe","2 геймпада","Топовые игры","HDMI кабель","Проверена"],
+        freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
+        lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Дороже",
+        hint0:"👆 Нажмите нужные дни — каждый выбранный день станет синим", hint1:"✅ Нажмите ещё, чтобы добавить дни. Чтобы убрать — нажмите синий день снова", hint2:"", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
+        name:"Имя и фамилия", address:"Адрес: район, улица, ориентир", comment:"Комментарий: какие игры нужны, время…",
+        share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", pickup:"🏠 Самовывоз", delivery:"🚕 Доставка",
+        rPick:"Получение", rRet:"Возврат", rNights:"Дней", rDelivery:"Доставка", negotiable:"по договорённости", rTotal:"Итого", dFriend:"🎁 Скидка друга", dBonus:"🎁 Бонус", dHint:"🎁 Скидка/бонус действуют на ночи Пн–Чт",
+        chSub:"Новости, скидки и свободные даты", t1:"Проверенная консоль", t2:"Быстрое подтверждение", t3:"Игры установлены",
+        rules:"• 1 сутки = 24 часа. Цена считается по дню начала суток.<br>• При получении нужен паспорт или залог.<br>• После заказа администратор свяжется с вами для подтверждения.",
+        nights:"дн.", som:"сум", from:"с", until:"до", agreed:"по договорённости",
+        btnPick:"Выберите день получения", btnEnd:"Выберите день возврата", btnOrder:"Оформить заказ",
+        eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
+        months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
+  en: { payCash:"💵 Cash", payCard:"💳 Card (Click/Payme)", rPay:"Payment", payNote:"at pickup", sTime:"Pickup time", tNote:"↩️ Return — {d} at {h} (each day = 24 hours).", tNone:"No suitable time for these dates — pick other dates", eTime:"Pick a pickup time", tagline:"PS5 rental in Tashkent — daily, easy and fast", gtaT:"GTA 6 is here! 🔥", gtaS:"Installed and ready — be among the first to play", hrsLbl:"🌙 Pickup / return: ", eveOnly:"Evenings only for now", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
+        wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", perDay:"/ day", chips:["🔥 GTA 6","PS Plus Deluxe","2 controllers","Top games","HDMI cable","Checked"],
+        freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
+        lFree:"Available", lBusy:"Booked", lSel:"Selected", lWe:"Higher price",
+        hint0:"👆 Tap the days you need — each selected day turns blue", hint1:"✅ Tap more days to add. Tap a blue day again to remove it", hint2:"", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
+        name:"Full name", address:"Address: district, street, landmark", comment:"Comment: which games, time…",
+        share:"📱 Use my Telegram number", shared:"✅ Number added", pickup:"🏠 Pickup", delivery:"🚕 Delivery",
+        rPick:"Pickup", rRet:"Return", rNights:"Days", rDelivery:"Delivery", negotiable:"negotiable", rTotal:"Total", dFriend:"🎁 Friend discount", dBonus:"🎁 Bonus", dHint:"🎁 Discount/bonus apply to Mon–Thu nights",
+        chSub:"News, discounts and free dates", t1:"Checked console", t2:"Fast confirmation", t3:"Games installed",
+        rules:"• 1 day = 24 hours. The price depends on the day the 24h period starts.<br>• ID or a deposit is required at pickup.<br>• After ordering, the admin will contact you to confirm.",
+        nights:"days", som:"UZS", from:"from", until:"until", agreed:"by agreement",
+        btnPick:"Pick the pickup day", btnEnd:"Pick the return day", btnOrder:"Place order",
+        eRange:"Booked days in range — pick another date", eDays:"Pick your dates first", eName:"Enter your full name", ePhone:"Enter a valid phone number", eAddr:"Enter your address",
+        months:["January","February","March","April","May","June","July","August","September","October","November","December"], dow:["Mo","Tu","We","Th","Fr","Sa","Su"] },
+};
+
+/* Umumiy geympad illyustratsiyasi (o'z suratingiz bo'lmasa ko'rinadi) */
+const PAD_SVG = `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b56b3"/><stop offset=".55" stop-color="#173a86"/><stop offset="1" stop-color="#0c2257"/></linearGradient>
+  <linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f1f47"/><stop offset="1" stop-color="#07112b"/></linearGradient>
+  <radialGradient id="gs" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#2a3550"/><stop offset="1" stop-color="#0a1022"/></radialGradient>
+ </defs>
+ <path d="M118 52c-30 0-52 18-62 50L28 196c-8 28 8 50 34 50 18 0 30-10 42-28l20-30h152l20 30c12 18 24 28 42 28 26 0 42-22 34-50l-28-94c-10-32-32-50-62-50z" fill="url(#gw)" stroke="#3d6cd0" stroke-width="2"/>
+ <path d="M140 60h120c14 0 22 8 22 20v34c0 10-8 18-18 18H136c-10 0-18-8-18-18V80c0-12 8-20 22-20z" fill="url(#gd)"/>
+ <path d="M150 70h100" stroke="#3d7bff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+ <g fill="#0a1a40"><rect x="80" y="94" width="14" height="40" rx="3"/><rect x="67" y="107" width="40" height="14" rx="3"/></g>
+ <g><circle cx="318" cy="94" r="9" fill="#0a1a40" stroke="#4f7fe0" stroke-width="1.2"/><circle cx="298" cy="114" r="9" fill="#0a1a40" stroke="#4f7fe0" stroke-width="1.2"/><circle cx="338" cy="114" r="9" fill="#0a1a40" stroke="#4f7fe0" stroke-width="1.2"/><circle cx="318" cy="134" r="9" fill="#0a1a40" stroke="#4f7fe0" stroke-width="1.2"/></g>
+ <circle cx="152" cy="168" r="24" fill="url(#gs)"/><circle cx="152" cy="168" r="15" fill="#070d1f"/>
+ <circle cx="248" cy="168" r="24" fill="url(#gs)"/><circle cx="248" cy="168" r="15" fill="#070d1f"/>
+ <circle cx="200" cy="152" r="7" fill="#7fa6ff"/>
+ <rect x="108" y="76" width="8" height="4" rx="2" fill="#6f93e6"/><rect x="284" y="76" width="8" height="4" rx="2" fill="#6f93e6"/>
+</svg>`;
+
+const tg = window.Telegram && window.Telegram.WebApp;
+// Klaviatura tugmasidan ochilganda initData bo'sh bo'ladi, shuning uchun platformaga qaraymiz
+const inTelegram = !!(tg && ((tg.platform && tg.platform !== "unknown") || tg.initData));
+const params = new URLSearchParams(location.search);
+const tgLang = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
+const LANG = I18N[params.get("lang")] ? params.get("lang") : (I18N[tgLang] ? tgLang : "uz");
+const L = I18N[LANG]; document.documentElement.lang = LANG;
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,"0");
+const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parseIso = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const addDays = (s,n) => { const d = parseIso(s); d.setDate(d.getDate()+n); return iso(d); };
+const num = n => Math.round(n).toLocaleString("ru-RU").replace(/[\s, ]/g," ");
+const fmt = n => num(n) + " " + L.som;
+const short = n => n >= 1000 ? Math.round(n/1000) + "k" : String(n);
+const human = s => { const d = parseIso(s); return d.getDate()+" "+L.months[d.getMonth()].slice(0,3).toLowerCase()+", "+L.dow[(d.getDay()+6)%7]; };
+const haptic = t => { try { t==="sel" ? tg.HapticFeedback.selectionChanged() : tg.HapticFeedback.notificationOccurred(t); } catch(e){} };
+
+/* ---------- ma'lumot (bot URL orqali yuboradi) ---------- */
+// Yangi bot "hrs" ni yuboradi. Eski bot (hrs yo'q) eski sana/narxlarni yuborsa — saytdagi standart qiymatlar ishlatiladi.
+const NEWBOT = params.has("hrs");
+const P = k => NEWBOT ? params.get(k) : null;
+const WD = +P("wd") || DEFAULTS.wd, WE = +P("we") || DEFAULTS.we;
+const SPECIAL = {};
+(P("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
+const booked = new Set([...(params.get("ps5") || "").split(",").filter(Boolean), ...(params.has("hrs") ? [] : DEFAULTS.blocked)]);
+// Bo'sh oraliqlar: [{from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}, ...]. Bo'sh ro'yxat = hamma kun ochiq.
+const openRaw = NEWBOT ? (params.get("open") || "") : DEFAULTS.open;
+const OPENS = (openRaw || "").split(";").filter(x => x.includes("..")).map(x => { const [a,b] = x.split(".."); return { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; });
+const LIMITED = openRaw === "none" || OPENS.length > 0;  // "none" = hech qaysi kun ochiq emas
+const winOf = d => OPENS.find(w => d >= w.from && d < w.to);
+// Boshqa mijozlarning chegaraviy vaqtlari (bot yuboradi): RA[kun] — shu kuni konsol qaytariladigan soat,
+// PA[kun] — shu kuni konsol olib ketiladigan soat. Bir kunda ikki mijoz to'qnashmasligi uchun.
+const timeMap = k => Object.fromEntries((params.get(k) || "").split(",").filter(x => x.includes("T")).map(x => [x.slice(0,10), x.slice(11,16)]));
+const RA = timeMap("ra"), PA = timeMap("pa");
+const HOURS = (params.get("hrs") || "").split(",").filter(x => x.trim() !== "").map(Number).filter(h => h >= 0 && h <= 23);
+if (!HOURS.length) HOURS.push(...DEFAULTS.hours);
+const hoursText = () => { const h = HOURS; return (h.at(-1)-h[0] === h.length-1) ? `${pad(h[0])}:00 – ${pad(h.at(-1))}:00` : h.map(x => pad(x)+":00").join(", "); };
+
+const today = new Date(); today.setHours(0,0,0,0);
+const TODAY = iso(today);
+const priceOf = d => SPECIAL[d] ?? ([0,6].includes(parseIso(d).getDay()) ? WE : WD);
+// DEMO tariflar: ijara necha kechaligiga qarab kechasi narx (Du–Ju / Sh–Ya)
+const TIERS = [
+  { min:7, wd:200000, we:200000, label:"7+ kecha (1 hafta)" },
+  { min:5, wd:210000, we:240000, label:"5–6 kecha" },
+  { min:3, wd:230000, we:250000, label:"3–4 kecha" },
+  { min:1, wd:250000, we:280000, label:"1–2 kecha" },
+];
+const tierFor = n => TIERS.find(t => n >= t.min);
+const nightPrice = (d, n) => { const t = tierFor(n); return [0,6].includes(parseIso(d).getDay()) ? t.we : t.wd; };
+const tierOf = p => { const u = [...new Set([WD, WE, ...Object.values(SPECIAL)])].sort((x,y)=>x-y); if (u.length < 2) return 1; const r = u.indexOf(p)/(u.length-1); return r < 0.34 ? 0 : r < 0.67 ? 1 : 2; };
+const isWeekend = d => [0,6].includes(parseIso(d).getDay());
+const nightFree = d => d >= TODAY && !booked.has(d) && !(LIMITED && !winOf(d));
+
+const firstFree = (() => { for (let i=0;i<400;i++){ const d = addDays(TODAY,i); if (nightFree(d)) return d; } return null; })();
+const state = { days:new Set(), time:null,
+  get sorted(){ return [...this.days].sort(); },
+  get start(){ return this.sorted[0] || null; },
+  get end(){ const s = this.sorted; return s.length ? addDays(s[s.length-1],1) : null; }, delivery:"pickup", pay:"cash",
+  view: firstFree ? new Date(parseIso(firstFree).getFullYear(), parseIso(firstFree).getMonth(), 1) : new Date(today.getFullYear(), today.getMonth(), 1) };
+
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600); haptic("warning"); }
+
+/* end tanlash mumkin bo'lgan kunlar: start dan keyin, oraliqdagi barcha sutkalar bo'sh */
+function returnable(start){
+  const out = new Set(); let d = start;
+  for (let i=0;i<400 && nightFree(d);i++){ d = addDays(d,1); out.add(d); }
+  return out;
+}
+const nightsOf = (s,e) => { const out=[]; for (let d=s; d<e; d=addDays(d,1)) out.push(d); return out; };
+/* tanlangan kunlarni ketma-ket bloklarga ajratish: [{from, to(qaytarish kuni), n}] */
+function blocks(){
+  const out = []; let cur = null;
+  state.sorted.forEach(d => {
+    if (cur && addDays(cur.last,1) === d) { cur.last = d; cur.n++; }
+    else { cur = { from:d, last:d, n:1 }; out.push(cur); }
+  });
+  out.forEach(b => b.to = addDays(b.last,1));
+  return out;
+}
+
+/* ---------- render ---------- */
+function renderStatic(){
+  document.querySelectorAll("[data-i]").forEach(el => { if (L[el.dataset.i] !== undefined) el.textContent = L[el.dataset.i]; });
+  document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = L[el.dataset.ph]);
+  document.querySelectorAll("[data-html]").forEach(el => el.innerHTML = L[el.dataset.html]);
+  const img = new Image(); img.alt = "";
+  img.onload = () => $("photo").appendChild(img);
+  img.onerror = () => $("photo").insertAdjacentHTML("beforeend", PAD_SVG);
+  if (DEFAULTS.photo) img.src = DEFAULTS.photo; else img.onerror();
+  const futureSp = Object.keys(SPECIAL).filter(d => d >= TODAY && !booked.has(d)).sort();
+  let rates = TIERS.slice().reverse().map(t => `<div class="rate"><small>${t.label}</small><b>${fmt(t.wd)} <em>Du–Ju / kecha</em></b><b style="margin-top:4px">${fmt(t.we)} <em>Sh–Ya / kecha</em></b></div>`).join("");
+  if (futureSp.length) {
+    const vals = [...new Set(futureSp.map(d => SPECIAL[d]))];
+    const range = futureSp.length > 1 ? `${parseIso(futureSp[0]).getDate()}–${human(futureSp.at(-1)).split(",")[0]}` : human(futureSp[0]).split(",")[0];
+    rates += `<div class="rate sp"><small>⭐ ${L.sp} · ${range}</small><b>${vals.map(fmt).join(" / ")} <em>${L.perDay}</em></b></div>`;
+  }
+  $("rates").innerHTML = rates;
+  $("chips").innerHTML = L.chips.map((c,i) => `<span class="chip${i===0?" hot":""}">${c}</span>`).join("");
+  $("pillTxt").textContent = firstFree ? L.freeNow : L.noFree;
+  $("pill").classList.toggle("busy", !firstFree);
+  const ws = OPENS.filter(w => w.to > TODAY);
+  if (false) {  // yashil "Bo'sh vaqt" yozuvi o'chirilgan
+    $("avail").style.display = "flex";
+    $("availTxt").innerHTML = ws.length ? ws.map(w => `${human(w.from)} ${w.fromT}  →  ${human(w.to)} ${w.toT}`).join("<br>") : L.eveOnly;
+    $("availHrs").textContent = L.hrsLbl + hoursText();
+  }
+}
+
+function renderCalendar(){
+  const v = state.view, y = v.getFullYear(), m = v.getMonth();
+  $("monthTitle").textContent = L.months[m] + " " + y;
+  const minV = new Date(today.getFullYear(), today.getMonth(), 1);
+  const maxV = new Date(today.getFullYear(), today.getMonth()+DEFAULTS.monthsAhead-1, 1);
+  $("prev").disabled = v <= minV; $("next").disabled = v >= maxV;
+  const first = (new Date(y,m,1).getDay()+6)%7, days = new Date(y,m+1,0).getDate();
+  const sel = state.days;
+  const retDays = new Set(blocks().map(b => b.to));
+  let html = L.dow.map((d,i)=>`<div class="dow ${i>4?"we":""}">${d}</div>`).join("");
+  for (let i=0;i<first;i++) html += "<div></div>";
+  for (let d=1; d<=days; d++){
+    const s = iso(new Date(y,m,d)); const p = priceOf(s);
+    let cls = "day", click = false, sub = "";
+    if (s < TODAY) cls += " past";
+    else if (sel.has(s)) { cls += " sel"; click = true; sub = short(p); }
+    else if (retDays.has(s)) { cls += " ret"; click = nightFree(s); sub = "↩"; }
+    else if (nightFree(s)) { cls += " free t"+tierOf(p); click = true; sub = short(p); }
+    else cls += " busy";
+    if (s === TODAY) cls += " today";
+    html += `<div class="${cls}" ${click?`data-d="${s}"`:""}>${d}${sub?`<span class="pr">${sub}</span>`:""}</div>`;
+  }
+  $("grid").innerHTML = html;
+  document.querySelectorAll(".day[data-d]").forEach(el => el.onclick = () => pickDay(el.dataset.d));
+  $("hint").textContent = !state.days.size ? L.hint0 : L.hint1;
+}
+
+function rangeFree(a, b){ for (let d=a; d<=b; d=addDays(d,1)) if (!nightFree(d)) return false; return true; }
+
+function pickDay(s){
+  haptic("sel");
+  let anim = "";
+  if (state.days.has(s)) { state.days.delete(s); anim = "unflip"; }   // qayta bosildi → bekor
+  else if (nightFree(s)) { state.days.add(s); anim = "flip"; }       // bo'sh kun → tanlandi
+  renderCalendar(); renderTimes(); renderSummary();
+  const el = document.querySelector(`.day[data-d="${s}"]`);
+  if (el && anim) el.classList.add(anim);
+}
+
+// Do'st chegirmasi (fd) va bonus hisobi (bal) — bot foydalanuvchiga xos yuboradi
+const FD = +params.get("fd") || 0, BAL = +params.get("bal") || 0;
+const isBonusNight = d => [1,2,3,4].includes(parseIso(d).getDay());   // Du, Se, Ch, Pa
+function calc(){
+  if (!state.days.size) return { nights:[], base:0, friend:0, bonus:0, total:0, groups:[] };
+  const n = state.sorted;
+  const groups = {};
+  let base = 0;
+  blocks().forEach(b => { for (let d = b.from; d < b.to; d = addDays(d,1)) {
+    const p = nightPrice(d, b.n); base += p;
+    const k = isWeekend(d) ? "we" : "wd"; const key = b.n + ":" + k + ":" + p;
+    groups[key] = groups[key] || {k, p, c:0, tier:tierFor(b.n).label}; groups[key].c++; } });
+  const cap = Math.floor(n.filter(isBonusNight).reduce((a,d)=>a+priceOf(d),0) * 0.5);
+  const friend = Math.min(FD, cap), bonus = Math.max(0, Math.min(BAL, cap - friend));
+  return { nights:n, base, friend, bonus, total:base - friend - bonus, groups:Object.values(groups) };
+}
+
+function validTimes(){
+  if (!state.days.size) return [];
+  const now = new Date(), nowH = now.getHours(), bl = blocks();
+  return HOURS.map(h => pad(h)+":00").filter(t => bl.every(b => {
+    const w = winOf(b.from);
+    if (w && b.from === w.from && t < w.fromT) return false;
+    if (w && b.to === w.to && t > w.toT) return false;
+    if (RA[b.from] && t < RA[b.from]) return false;   // oldingi mijoz hali qaytarmagan
+    if (PA[b.to] && t > PA[b.to]) return false;       // keyingi mijoz olishidan kech bo'lib qoladi
+    if (b.from === TODAY && +t.slice(0,2) <= nowH) return false;
+    return true;
+  }));
+}
+function renderTimes(){
+  const sec = $("timeSec");
+  if (!state.days.size) { sec.style.display = "none"; state.time = null; return; }
+  sec.style.display = "";
+  const ts = validTimes();
+  if (!ts.includes(state.time)) state.time = ts.includes("10:00") ? "10:00" : (ts[0] || null);
+  const groups = [[8,11],[12,17],[18,23]];
+  $("times").innerHTML = groups.map((g,i) => {
+    const items = ts.filter(t => +t.slice(0,2) >= g[0] && +t.slice(0,2) <= g[1]);
+    if (!items.length) return "";
+    return `<div class="tgrp" style="grid-column:1/-1">${L.period[i]}</div>` + items.map(t => `<button class="time ${t===state.time?"on":""}" data-t="${t}">${t}</button>`).join("");
+  }).join("");
+  document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); });
+  $("tnote").textContent = ts.length ? L.tNote.replace("{d}", blocks().map(b => human(b.to).split(",")[0]).join(", ")).replace("{h}", state.time) : L.tNone;
+}
+function renderSummary(){
+  const c = calc();
+  const bl = blocks(), tm = state.time ? " " + state.time : "";
+  const sh = d => human(d).split(",")[0];
+  $("sPick").innerHTML = bl.length ? bl.map(b => sh(b.from) + tm).join("<br>") : "—";
+  $("sRet").innerHTML = bl.length ? bl.map(b => sh(b.to) + tm).join("<br>") : "—";
+  $("sNights").textContent = c.nights.length + " " + L.nights;
+  if (c.nights.length) {
+    $("calc").style.display = "block";
+    $("calc").innerHTML = c.groups.map(g => `<div><span>${g.c} × ${fmt(g.p)} <small style="color:var(--muted)">(${g.k==="we"?L.we:L.wd} · ${g.tier})</small></span><span>${fmt(g.c*g.p)}</span></div>`).join("")
+      + (c.friend ? `<div style="color:var(--ok)"><span>${L.dFriend}</span><span>−${fmt(c.friend)}</span></div>` : "")
+      + (c.bonus ? `<div style="color:var(--ok)"><span>${L.dBonus}</span><span>−${fmt(c.bonus)}</span></div>` : "")
+      + ((FD || BAL) && !c.friend && !c.bonus ? `<div><small style="color:var(--muted)">${L.dHint}</small></div>` : "");
+  } else $("calc").style.display = "none";
+  $("sPay").textContent = (state.pay==="cash" ? L.payCash : L.payCard) + " · " + L.payNote;
+  $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
+  $("sTotal").textContent = fmt(c.total);
+  const ready = c.nights.length && state.time;
+  const label = ready ? `${L.btnOrder}  •  ${fmt(c.total)}` : (c.nights.length ? L.eTime : L.btnPick);
+  if (inTelegram) {
+    // matn, rang va holatni bitta chaqiruvda yangilaymiz (aks holda Telegram eski summani ko'rsatib qolishi mumkin)
+    tg.MainButton.setParams({ text: label, color: ready ? "#2f8cff" : "#252b38", text_color: ready ? "#ffffff" : "#6b7488", is_active: !!ready, is_visible: true });
+  } else { $("bar").style.display = "block"; $("fallbackBtn").textContent = label; $("fallbackBtn").disabled = !ready; }
+}
+
+function submit(){
+  const c = calc();
+  const name = $("name").value.trim(), phone = $("phone").value.trim(), address = $("address").value.trim();
+  if (!c.nights.length) return toast(L.eDays);
+  if (!state.time) return toast(L.eTime);
+  if (name.length < 2) { $("name").focus(); return toast(L.eName); }
+  if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast(L.ePhone); }
+  if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast(L.eAddr); }
+  haptic("success");
+  const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, dates:state.sorted, days:c.nights.length, pick_time:state.time, ret_time:state.time,
+                  delivery:state.delivery, pay:state.pay, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
+  alert("🧪 DEMO: buyurtma yuborilmaydi.\n\n" + c.groups.map(g => `${g.c} × ${fmt(g.p)} (${g.tier})`).join("\n") + "\n\nJami: " + fmt(c.total));
+  return;
+  if (inTelegram) {
+    try { tg.sendData(JSON.stringify(order)); }
+    catch(e) { alert({uz:"Buyurtma yuborilmadi. Bot ichidagi pastki «🎮 Ijaraga olish» tugmasi orqali qayta oching.", ru:"Заказ не отправлен. Откройте заново через нижнюю кнопку «🎮 Арендовать» в боте.", en:"Order not sent. Please reopen via the bottom «🎮 Rent now» button in the bot."}[LANG] || "Error"); }
+  }
+  else alert("Brauzerda sinov rejimi. Telegram ichida bu buyurtma botga yuboriladi:\n\n" + JSON.stringify(order, null, 2));
+}
+
+/* ---------- hodisalar ---------- */
+$("prev").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()-1, 1); renderCalendar(); };
+$("next").onclick = () => { state.view = new Date(state.view.getFullYear(), state.view.getMonth()+1, 1); renderCalendar(); };
+document.querySelectorAll("#deliverySeg button").forEach(b => b.onclick = () => {
+  haptic("sel");
+  document.querySelectorAll("#deliverySeg button").forEach(x => x.classList.toggle("active", x===b));
+  state.delivery = b.dataset.v; $("addressBox").style.display = state.delivery==="delivery" ? "" : "none"; renderSummary();
+});
+$("fallbackBtn").onclick = submit;
+document.querySelectorAll("#paySeg button").forEach(b => b.onclick = () => {
+  haptic("sel"); document.querySelectorAll("#paySeg button").forEach(x => x.classList.toggle("active", x===b));
+  state.pay = b.dataset.v; renderSummary();
+});
+["channelCard","chTop"].forEach(id => $(id).onclick = e => { if (inTelegram && tg.openTelegramLink) { e.preventDefault(); tg.openTelegramLink("https://t.me/ps_5_gta_6"); } });
+
+const shareBtn = $("shareBtn");
+if (inTelegram && typeof tg.requestContact === "function") {
+  shareBtn.textContent = L.share; shareBtn.style.display = "flex";
+  shareBtn.onclick = () => {
+    haptic("sel");
+    tg.requestContact((ok, res) => {
+      const c = res && res.responseUnsafe && res.responseUnsafe.contact;
+      if (ok && c && c.phone_number) {
+        const ph = String(c.phone_number); $("phone").value = ph.startsWith("+") ? ph : "+" + ph;
+        if (!$("name").value.trim()) $("name").value = [c.first_name, c.last_name].filter(Boolean).join(" ");
+      }
+      if (ok) { shareBtn.textContent = L.shared; shareBtn.classList.add("done"); haptic("success"); }
+    });
+  };
+}
+
+if (inTelegram) {
+  tg.ready(); tg.expand();
+  try { tg.setHeaderColor("#0b0d12"); tg.setBackgroundColor("#0b0d12"); tg.setBottomBarColor && tg.setBottomBarColor("#0b0d12"); } catch(e){}
+  tg.MainButton.onClick(submit);
+  const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (u) $("name").value = [u.first_name, u.last_name].filter(Boolean).join(" ");
+}
+renderStatic(); renderCalendar(); renderSummary();
+</script>
+</body>
+</html>
