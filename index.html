@@ -276,7 +276,7 @@
 const DEFAULTS = { wd: 280000, we: 300000, sp: "",
   open: "2026-11-24T18:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-25T20:00",
   monthsAhead: 12, photo: "ps5_hd.jpg", hours: [18,19,20],
-  blocked: ["2026-11-23"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
+  blocked: ["2026-11-23","2026-11-26","2026-11-27","2026-11-28","2026-11-29","2026-11-30","2026-12-01","2026-12-02"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
 /* ========================================================== */
 
 const I18N = {
@@ -287,7 +287,7 @@ const I18N = {
         hint0:"👆 Kerakli kunlarni bosing — har bir bosilgan kun ko'k bo'ladi", hint1:"✅ Yana kun qo'shish uchun bosing. Bekor qilish uchun ko'k kunni qayta bosing", hint2:"", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
         name:"Ism va familiya", address:"Manzil: tuman, ko'cha, mo'ljal", comment:"Izoh: qaysi o'yinlar kerak, vaqt…",
         share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish",
-        rPick:"Olish", rRet:"Qaytarish", rNights:"Kunlar", rDelivery:"Yetkazib berish", negotiable:"kelishiladi", rTotal:"Jami",
+        rPick:"Olish", rRet:"Qaytarish", rNights:"Kunlar", rDelivery:"Yetkazib berish", negotiable:"kelishiladi", rTotal:"Jami", dFriend:"🎁 Do'st chegirmasi", dBonus:"🎁 Bonus", dHint:"🎁 Chegirma/bonus Du–Pa kechalariga ishlaydi",
         chSub:"Yangiliklar, chegirmalar va bo'sh kunlar", t1:"Tekshirilgan konsol", t2:"Tez tasdiqlash", t3:"O'yinlar o'rnatilgan",
         rules:"• 1 sutka = 24 soat. Narx sutka boshlangan kunga qarab hisoblanadi.<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
         nights:"kun", som:"so'm", from:"dan", until:"gacha", agreed:"kelishiladi",
@@ -301,7 +301,7 @@ const I18N = {
         hint0:"👆 Нажмите нужные дни — каждый выбранный день станет синим", hint1:"✅ Нажмите ещё, чтобы добавить дни. Чтобы убрать — нажмите синий день снова", hint2:"", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
         name:"Имя и фамилия", address:"Адрес: район, улица, ориентир", comment:"Комментарий: какие игры нужны, время…",
         share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", pickup:"🏠 Самовывоз", delivery:"🚕 Доставка",
-        rPick:"Получение", rRet:"Возврат", rNights:"Дней", rDelivery:"Доставка", negotiable:"по договорённости", rTotal:"Итого",
+        rPick:"Получение", rRet:"Возврат", rNights:"Дней", rDelivery:"Доставка", negotiable:"по договорённости", rTotal:"Итого", dFriend:"🎁 Скидка друга", dBonus:"🎁 Бонус", dHint:"🎁 Скидка/бонус действуют на ночи Пн–Чт",
         chSub:"Новости, скидки и свободные даты", t1:"Проверенная консоль", t2:"Быстрое подтверждение", t3:"Игры установлены",
         rules:"• 1 сутки = 24 часа. Цена считается по дню начала суток.<br>• При получении нужен паспорт или залог.<br>• После заказа администратор свяжется с вами для подтверждения.",
         nights:"дн.", som:"сум", from:"с", until:"до", agreed:"по договорённости",
@@ -315,7 +315,7 @@ const I18N = {
         hint0:"👆 Tap the days you need — each selected day turns blue", hint1:"✅ Tap more days to add. Tap a blue day again to remove it", hint2:"", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
         name:"Full name", address:"Address: district, street, landmark", comment:"Comment: which games, time…",
         share:"📱 Use my Telegram number", shared:"✅ Number added", pickup:"🏠 Pickup", delivery:"🚕 Delivery",
-        rPick:"Pickup", rRet:"Return", rNights:"Days", rDelivery:"Delivery", negotiable:"negotiable", rTotal:"Total",
+        rPick:"Pickup", rRet:"Return", rNights:"Days", rDelivery:"Delivery", negotiable:"negotiable", rTotal:"Total", dFriend:"🎁 Friend discount", dBonus:"🎁 Bonus", dHint:"🎁 Discount/bonus apply to Mon–Thu nights",
         chSub:"News, discounts and free dates", t1:"Checked console", t2:"Fast confirmation", t3:"Games installed",
         rules:"• 1 day = 24 hours. The price depends on the day the 24h period starts.<br>• ID or a deposit is required at pickup.<br>• After ordering, the admin will contact you to confirm.",
         nights:"days", som:"UZS", from:"from", until:"until", agreed:"by agreement",
@@ -367,7 +367,7 @@ const P = k => NEWBOT ? params.get(k) : null;
 const WD = +P("wd") || DEFAULTS.wd, WE = +P("we") || DEFAULTS.we;
 const SPECIAL = {};
 (P("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
-const booked = new Set([...(params.get("ps5") || "").split(",").filter(Boolean), ...DEFAULTS.blocked]);
+const booked = new Set([...(params.get("ps5") || "").split(",").filter(Boolean), ...(params.has("hrs") ? [] : DEFAULTS.blocked)]);
 // Bo'sh oraliqlar: [{from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}, ...]. Bo'sh ro'yxat = hamma kun ochiq.
 const openRaw = NEWBOT ? (params.get("open") || "") : DEFAULTS.open;
 const OPENS = (openRaw || "").split(";").filter(x => x.includes("..")).map(x => { const [a,b] = x.split(".."); return { from:a.slice(0,10), fromT:a.slice(11,16), to:b.slice(0,10), toT:b.slice(11,16) }; });
@@ -483,12 +483,18 @@ function pickDay(s){
   if (el && anim) el.classList.add(anim);
 }
 
+// Do'st chegirmasi (fd) va bonus hisobi (bal) — bot foydalanuvchiga xos yuboradi
+const FD = +params.get("fd") || 0, BAL = +params.get("bal") || 0;
+const isBonusNight = d => [1,2,3,4].includes(parseIso(d).getDay());   // Du, Se, Ch, Pa
 function calc(){
-  if (!state.days.size) return { nights:[], total:0, groups:[] };
+  if (!state.days.size) return { nights:[], base:0, friend:0, bonus:0, total:0, groups:[] };
   const n = state.sorted;
   const groups = {};
   n.forEach(d => { const p = priceOf(d); const k = (d in SPECIAL) ? "sp" : (isWeekend(d) ? "we" : "wd"); const key = k+":"+p; groups[key] = groups[key] || {k, p, c:0}; groups[key].c++; });
-  return { nights:n, total:n.reduce((a,d)=>a+priceOf(d),0), groups:Object.values(groups) };
+  const base = n.reduce((a,d)=>a+priceOf(d),0);
+  const cap = Math.floor(n.filter(isBonusNight).reduce((a,d)=>a+priceOf(d),0) * 0.5);
+  const friend = Math.min(FD, cap), bonus = Math.max(0, Math.min(BAL, cap - friend));
+  return { nights:n, base, friend, bonus, total:base - friend - bonus, groups:Object.values(groups) };
 }
 
 function validTimes(){
@@ -528,7 +534,10 @@ function renderSummary(){
   $("sNights").textContent = c.nights.length + " " + L.nights;
   if (c.nights.length) {
     $("calc").style.display = "block";
-    $("calc").innerHTML = c.groups.map(g => `<div><span>${g.c} × ${fmt(g.p)} <small style="color:var(--muted)">(${g.k==="sp"?"⭐ "+L.sp:(g.k==="we"?L.we:L.wd)})</small></span><span>${fmt(g.c*g.p)}</span></div>`).join("");
+    $("calc").innerHTML = c.groups.map(g => `<div><span>${g.c} × ${fmt(g.p)} <small style="color:var(--muted)">(${g.k==="sp"?"⭐ "+L.sp:(g.k==="we"?L.we:L.wd)})</small></span><span>${fmt(g.c*g.p)}</span></div>`).join("")
+      + (c.friend ? `<div style="color:var(--ok)"><span>${L.dFriend}</span><span>−${fmt(c.friend)}</span></div>` : "")
+      + (c.bonus ? `<div style="color:var(--ok)"><span>${L.dBonus}</span><span>−${fmt(c.bonus)}</span></div>` : "")
+      + ((FD || BAL) && !c.friend && !c.bonus ? `<div><small style="color:var(--muted)">${L.dHint}</small></div>` : "");
   } else $("calc").style.display = "none";
   $("sPay").textContent = (state.pay==="cash" ? L.payCash : L.payCard) + " · " + L.payNote;
   $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
