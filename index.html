@@ -259,6 +259,10 @@
   /* "rent": tartibli kulrang (kumushrang), ko'k emas */
   .head h1 span{background:linear-gradient(180deg,#5b93ff 0%,#1f5fff 50%,#0b3fc6 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
     font-weight:700;filter:drop-shadow(0 1px 0 rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(31,95,255,.35))}
+  /* Aksiya kunlari */
+  .day .ak{display:block;margin-top:2px;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1;color:#ffb547}
+  .day.sel .ak{color:#fff;font-size:9.5px;letter-spacing:0;text-transform:none}
+  .day.free.promo{box-shadow:inset 0 0 0 1.5px rgba(255,181,71,.75),inset 0 1px 0 rgba(255,255,255,.1),0 3px 10px rgba(255,150,40,.28)}
   /* Ikki ekran va qadam ko'rsatkichi */
   .stepper{display:flex;align-items:center;gap:10px;margin:10px 14px 0;padding:9px 12px;border-radius:14px;background:rgba(14,16,24,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
   .st{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:rgba(255,255,255,.45);transition:color .25s}
@@ -401,7 +405,7 @@ const DEFAULTS = { wd: 250000, we: 280000, sp: "", promo: "2026-11-01..2026-11-3
 
 const I18N = {
   uz: { payCash:"💵 Naqd", payCard:"💳 Karta (Click/Payme)", rPay:"To'lov", payNote:"konsolni olganda", sTime:"Olish vaqti", tNote:"↩️ Qaytarish — {d}, soat {h} (har bir kun = 24 soat).", tNone:"Bu kunlar uchun mos vaqt yo'q — boshqa sanani tanlang", eTime:"Olish vaqtini tanlang", tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", gtaT:"GTA 6 bor! 🔥", gtaS:"Konsolda o'rnatilgan — birinchilardan bo'lib o'ynang", hrsLbl:"🌙 Olib ketish / qaytarish: ", eveOnly:"Hozircha faqat kechqurun", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
-        wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", promo:"AKSIYA", promoTo:"{d} gacha", perDay:"/ sutka", chips:["🔥 GTA 6","PS Plus Deluxe","Mashhur o'yinlar"],
+        wd:"Du – Ju", we:"Sh – Ya", sp:"Maxsus narx", promo:"AKSIYA", promoTo:"{d} gacha", promoDay:"aksiya", promoPicked:"🔥 Aksiya kuni — kuniga atigi {p}!", perDay:"/ sutka", chips:["🔥 GTA 6","PS Plus Deluxe","Mashhur o'yinlar"],
         freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Kunlarni tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
         lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Qimmatroq",
         hint0:"👆 Kerakli kunlarni bosing — har bir bosilgan kun ko'k bo'ladi", hint1:"✅ Yana kun qo'shish uchun bosing. Bekor qilish uchun ko'k kunni qayta bosing", hint2:"", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
@@ -415,7 +419,7 @@ const I18N = {
         eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
         months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
   ru: { payCash:"💵 Наличные", payCard:"💳 Карта (Click/Payme)", rPay:"Оплата", payNote:"при получении", sTime:"Время получения", tNote:"↩️ Возврат — {d}, в {h} (каждый день = 24 часа).", tNone:"Для этих дат нет подходящего времени — выберите другие", eTime:"Выберите время получения", tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", gtaT:"Есть GTA 6! 🔥", gtaS:"Уже установлена — играйте одними из первых", hrsLbl:"🌙 Получение / возврат: ", eveOnly:"Пока только вечером", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
-        wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", promo:"АКЦИЯ", promoTo:"до {d}", perDay:"/ сутки", chips:["🔥 GTA 6","PS Plus Deluxe","Топовые игры"],
+        wd:"Пн – Пт", we:"Сб – Вс", sp:"Спеццена", promo:"АКЦИЯ", promoTo:"до {d}", promoDay:"акция", promoPicked:"🔥 День акции — всего {p} в сутки!", perDay:"/ сутки", chips:["🔥 GTA 6","PS Plus Deluxe","Топовые игры"],
         freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
         lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Дороже",
         hint0:"👆 Нажмите нужные дни — каждый выбранный день станет синим", hint1:"✅ Нажмите ещё, чтобы добавить дни. Чтобы убрать — нажмите синий день снова", hint2:"", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
@@ -429,7 +433,7 @@ const I18N = {
         eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
         months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
   en: { payCash:"💵 Cash", payCard:"💳 Card (Click/Payme)", rPay:"Payment", payNote:"at pickup", sTime:"Pickup time", tNote:"↩️ Return — {d} at {h} (each day = 24 hours).", tNone:"No suitable time for these dates — pick other dates", eTime:"Pick a pickup time", tagline:"PS5 rental in Tashkent — daily, easy and fast", gtaT:"GTA 6 is here! 🔥", gtaS:"Installed and ready — be among the first to play", hrsLbl:"🌙 Pickup / return: ", eveOnly:"Evenings only for now", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
-        wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", promo:"PROMO", promoTo:"until {d}", perDay:"/ day", chips:["🔥 GTA 6","PS Plus Deluxe","Top games"],
+        wd:"Mon – Fri", we:"Sat – Sun", sp:"Special price", promo:"PROMO", promoTo:"until {d}", promoDay:"promo", promoPicked:"🔥 Promo day — just {p} per day!", perDay:"/ day", chips:["🔥 GTA 6","PS Plus Deluxe","Top games"],
         freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
         lFree:"Available", lBusy:"Booked", lSel:"Selected", lWe:"Higher price",
         hint0:"👆 Tap the days you need — each selected day turns blue", hint1:"✅ Tap more days to add. Tap a blue day again to remove it", hint2:"", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
@@ -600,7 +604,10 @@ function renderCalendar(){
     else if (nightFree(s)) { cls += " free t"+tierOf(p); click = true; sub = short(p); }
     else cls += " busy";
     if (s === TODAY) cls += " today";
-    html += `<div class="${cls}" ${click?`data-d="${s}"`:""}>${d}${sub?`<span class="pr">${sub}</span>`:""}</div>`;
+    const promoDay = PROMO && s >= PROMO.from && s <= PROMO.to && s >= TODAY && (sel.has(s) || nightFree(s));
+    if (promoDay) cls += " promo";
+    const ak = promoDay ? `<span class="ak">${sel.has(s) ? short(PROMO.price) : L.promoDay}</span>` : "";
+    html += `<div class="${cls}" ${click?`data-d="${s}"`:""}>${d}${sub?`<span class="pr">${sub}</span>`:""}${ak}</div>`;
   }
   $("grid").innerHTML = html;
   document.querySelectorAll(".day[data-d]").forEach(el => el.onclick = () => pickDay(el.dataset.d));
@@ -617,6 +624,7 @@ function pickDay(s){
   renderCalendar(); renderTimes(); renderSummary();
   const el = document.querySelector(`.day[data-d="${s}"]`);
   if (el && anim) el.classList.add(anim);
+  if (anim === "flip" && PROMO && s >= PROMO.from && s <= PROMO.to) $("hint").textContent = L.promoPicked.replace("{p}", fmt(PROMO.price));
 }
 
 // Do'st chegirmasi (fd) va bonus hisobi (bal) — bot foydalanuvchiga xos yuboradi
