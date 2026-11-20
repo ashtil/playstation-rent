@@ -6,7 +6,8 @@
 <title>PlayRent — narx demo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0b0d12; --card:#151922; --card2:#1c212c; --card3:#252b38; --line:rgba(255,255,255,.07);
@@ -20,7 +21,7 @@
   body{background:transparent}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:linear-gradient(180deg,transparent 0%,rgba(6,7,11,.25) 50%,rgba(6,7,11,.15) 100%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
   body > *{position:relative;z-index:1}
-  body{color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+  body{color:var(--text);font:15px/1.5 "Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(110px + env(safe-area-inset-bottom))}
   button{font-family:inherit}
   .wrap{padding:0 16px}
 
@@ -54,10 +55,16 @@
   .rate.we b{color:#fff}
   .rate.sp{grid-column:1/-1;background:#0070d1;border-color:#0070d1}
   .rate.sp small,.rate.sp b,.rate.sp b em{color:#fff}
-  .gta{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#ff2e88 0%,#ff7a3d 55%,#ffb547 100%);color:#fff;box-shadow:0 10px 28px rgba(255,80,110,.28)}
-  .gta .gt{flex:none;font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1;padding:7px 9px;border-radius:10px;background:rgba(0,0,0,.28)}
-  .gta b{display:block;font-size:14.5px;font-weight:800}
-  .gta small{display:block;font-size:12px;opacity:.92}
+  /* GTA VI uslubi: Vice City quyosh botishi — binafsha, pushti, to'q sariq */
+  .gta{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 16px;border-radius:16px;color:#fff;
+       background:radial-gradient(120% 140% at 100% 120%,#ffb347 0%,rgba(255,179,71,0) 45%),linear-gradient(115deg,#2a0a4a 0%,#6a1b9a 30%,#d81b77 62%,#ff6f3c 88%,#ffc15e 100%);
+       box-shadow:0 12px 30px rgba(216,27,119,.35),inset 0 0 0 1px rgba(255,255,255,.12)}
+  .gta::after{content:"";position:absolute;right:-18px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(255,224,130,.55),rgba(255,224,130,0) 70%);pointer-events:none}
+  .gta .gt{position:relative;z-index:1;flex:none;font-family:"Anton","Plus Jakarta Sans",sans-serif;font-size:34px;line-height:1;letter-spacing:.01em;font-style:italic;padding:2px 4px 2px 0;
+           background:linear-gradient(180deg,#ffe3f3 0%,#ff9ad5 38%,#ff5fa2 62%,#ffb15e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+           filter:drop-shadow(0 2px 0 rgba(60,0,60,.55)) drop-shadow(0 0 10px rgba(255,120,200,.45))}
+  .gta .gt span{display:inline-block;padding:0 .14em 0 .02em;background:linear-gradient(180deg,#8ff7ff 0%,#4fd1ff 55%,#b98bff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .gta b{position:relative;z-index:1;font-size:17px;font-weight:800;letter-spacing:-.01em;text-shadow:0 2px 10px rgba(60,0,60,.45)}
   .chip.hot{color:#fff;background:linear-gradient(135deg,#ff2e88,#ff7a3d);border-color:transparent}
   .avail .hrs{display:block;font-size:12.5px;color:#c7cedb;margin-top:3px}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
@@ -188,7 +195,7 @@
   <div class="pbody">
     <h2>PlayStation 5 Slim Digital</h2>
     <div class="sub" data-i="sub"></div>
-    <div class="gta"><div class="gt">GTA VI</div><div><b data-i="gtaT"></b><small data-i="gtaS"></small></div></div>
+    <div class="gta"><div class="gt">GTA <span>VI</span></div><b data-i="gtaT"></b></div>
     <div class="rates" id="rates"></div>
     <div class="chips" id="chips"></div>
   </div>
@@ -435,7 +442,9 @@ function renderStatic(){
   img.onerror = () => $("photo").insertAdjacentHTML("beforeend", PAD_SVG);
   if (DEFAULTS.photo) img.src = DEFAULTS.photo; else img.onerror();
   const futureSp = Object.keys(SPECIAL).filter(d => d >= TODAY && !booked.has(d)).sort();
-  let rates = TIERS.slice().reverse().map(t => `<div class="rate"><small>${t.label}</small><b>${fmt(t.wd)} <em>Du–Ju / kecha</em></b><b style="margin-top:4px">${fmt(t.we)} <em>Sh–Ya / kecha</em></b></div>`).join("");
+  const base = TIERS[TIERS.length - 1];
+  let rates = `<div class="rate"><small>${L.wd}</small><b>${fmt(base.wd)} <em>${L.perDay}</em></b></div>
+               <div class="rate we"><small>${L.we}</small><b>${fmt(base.we)} <em>${L.perDay}</em></b></div>`;
   if (futureSp.length) {
     const vals = [...new Set(futureSp.map(d => SPECIAL[d]))];
     const range = futureSp.length > 1 ? `${parseIso(futureSp[0]).getDate()}–${human(futureSp.at(-1)).split(",")[0]}` : human(futureSp[0]).split(",")[0];
