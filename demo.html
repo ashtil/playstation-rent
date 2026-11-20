@@ -259,6 +259,27 @@
   /* "rent": tartibli kulrang (kumushrang), ko'k emas */
   .head h1 span{background:linear-gradient(180deg,#5b93ff 0%,#1f5fff 50%,#0b3fc6 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
     font-weight:700;filter:drop-shadow(0 1px 0 rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(31,95,255,.35))}
+  /* Ikki ekran va qadam ko'rsatkichi */
+  .stepper{display:flex;align-items:center;gap:10px;margin:10px 14px 0;padding:9px 12px;border-radius:14px;background:rgba(14,16,24,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+  .st{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:rgba(255,255,255,.45);transition:color .25s}
+  .st em{font-style:normal}
+  .st i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;background:rgba(255,255,255,.12);transition:background .25s,box-shadow .25s}
+  .st.on{color:#fff}
+  .st.on i{background:linear-gradient(180deg,#2f8eff,#0060c8);box-shadow:0 2px 8px rgba(47,142,255,.5)}
+  .st.done{color:#c9f2e2}
+  .st.done i{background:linear-gradient(180deg,#34d39b,#1aa774)}
+  .stepper b{flex:1;height:2px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}
+  .stepper b::after{content:"";position:absolute;inset:0;width:0;background:linear-gradient(90deg,#34d39b,#2f8eff);transition:width .35s ease}
+  .stepper.s2 b::after{width:100%}
+  .screen[hidden]{display:none}
+  @keyframes scrIn{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
+  @keyframes scrBack{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:none}}
+  .screen.in{animation:scrIn .34s cubic-bezier(.2,.8,.2,1)}
+  .screen.inb{animation:scrBack .34s cubic-bezier(.2,.8,.2,1)}
+  .back{margin:12px 14px 0;display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:12px;border:0;color:#fff;font:inherit;font-weight:700;font-size:14px;cursor:pointer;
+    background:linear-gradient(180deg,#272d3b,#1a1e28);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 7px rgba(0,0,0,.38);transition:transform .13s ease,box-shadow .13s ease}
+  .back:active{transform:translateY(2px) scale(.97);box-shadow:inset 0 2px 5px rgba(0,0,0,.5)}
+  @media (prefers-reduced-motion:reduce){.screen.in,.screen.inb{animation:none}}
   @media (prefers-reduced-motion:reduce){.grid.slideL,.grid.slideR,.sec.flash{animation:none}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -273,6 +294,9 @@
   <a class="chbtn" id="chTop" href="https://t.me/ps_5_gta_6" target="_blank">📢 <span data-i="chShort"></span></a>
 </div>
 
+<div class="stepper" id="stepper"><span class="st on" id="st1"><i>1</i><em></em></span><b></b><span class="st" id="st2"><i>2</i><em></em></span></div>
+
+<div class="screen" id="scr1">
 <div class="product">
   <div class="photo" id="photo">
     <div class="pill" id="pill"><i></i><span id="pillTxt"></span></div>
@@ -282,7 +306,6 @@
     <h2>PlayStation 5 Slim Digital</h2>
     <div class="sub" data-i="sub"></div>
     <div class="rates" id="rates"></div>
-    <div class="chips" id="chips"></div>
   </div>
 </div>
 
@@ -317,6 +340,10 @@
   </div>
 </div>
 
+</div>
+
+<div class="screen" id="scr2" hidden>
+<button class="back" id="backBtn" type="button">‹ <span></span></button>
 <div class="sec" id="secInfo">
   <div class="sec-h"><h3><span class="n">3</span><span data-i="s3"></span></h3></div>
   <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="name" data-ph="name" autocomplete="name"></div>
@@ -356,6 +383,7 @@
     <div><b>🎮</b><span data-i="t3"></span></div>
   </div>
   <div class="rules" data-html="rules"></div>
+</div>
 </div>
 
 <div class="bar" id="bar"><button id="fallbackBtn"></button></div>
@@ -536,7 +564,6 @@ function renderStatic(){
     rates += `<div class="rate sp"><small>⭐ ${L.sp} · ${range}</small><b>${vals.map(fmt).join(" / ")} <em>${L.perDay}</em></b></div>`;
   }
   $("rates").innerHTML = rates;
-  $("chips").innerHTML = L.chips.map((c,i) => `<span class="chip${i===0?" hot":""}">${c}</span>`).join("");
   $("pillTxt").textContent = firstFree ? L.freeNow : L.noFree;
   $("pill").classList.toggle("busy", !firstFree);
   const ws = OPENS.filter(w => w.to > TODAY);
@@ -628,9 +655,34 @@ function renderTimes(){
     if (!items.length) return "";
     return `<div class="tgrp" style="grid-column:1/-1">${L.period[i]}</div>` + items.map(t => `<button class="time ${t===state.time?"on":""}" data-t="${t}">${t}</button>`).join("");
   }).join("");
-  document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); goNext("secInfo"); });
+  document.querySelectorAll(".time").forEach(b => b.onclick = () => { haptic("sel"); state.time = b.dataset.t; renderTimes(); renderSummary(); });
   $("tnote").textContent = ts.length ? L.tNote.replace("{d}", blocks().map(b => human(b.to).split(",")[0]).join(", ")).replace("{h}", state.time) : L.tNone;
 }
+// ---------- Ikki ekran ----------
+let step = 1;
+const STEP = ({ uz:{ next:"Davom etish", back:"Orqaga", s1:"Kunlar", s2:"Ma'lumotlar" },
+                ru:{ next:"Далее", back:"Назад", s1:"Даты", s2:"Данные" },
+                en:{ next:"Continue", back:"Back", s1:"Dates", s2:"Details" } })[LANG] || {};
+function goStep(n){
+  if (n === step) return;
+  const back = n < step; step = n;
+  const show = $(n === 1 ? "scr1" : "scr2"), hide = $(n === 1 ? "scr2" : "scr1");
+  hide.hidden = true; show.hidden = false;
+  show.classList.remove("in","inb"); void show.offsetWidth; show.classList.add(back ? "inb" : "in");
+  $("st1").classList.toggle("on", n === 1); $("st1").classList.toggle("done", n === 2);
+  $("st2").classList.toggle("on", n === 2); $("stepper").classList.toggle("s2", n === 2);
+  window.scrollTo({ top: 0, behavior: "instant" });
+  try { if (inTelegram) (n === 2 ? tg.BackButton.show() : tg.BackButton.hide()); } catch(e){}
+  haptic("sel"); renderSummary();
+}
+function mainAction(){
+  if (step === 1) { if (calc().nights.length && state.time) goStep(2); else toast(calc().nights.length ? L.eTime : L.eDays); }
+  else submit();
+}
+$("backBtn").onclick = () => goStep(1);
+$("st1").querySelector("em").textContent = STEP.s1; $("st2").querySelector("em").textContent = STEP.s2;
+$("backBtn").querySelector("span").textContent = STEP.back;
+
 function renderSummary(){
   const c = calc();
   const bl = blocks(), tm = state.time ? " " + state.time : "";
@@ -649,7 +701,7 @@ function renderSummary(){
   $("sDeliveryRow").style.display = state.delivery==="delivery" ? "" : "none";
   $("sTotal").textContent = fmt(c.total);
   const ready = c.nights.length && state.time;
-  const label = ready ? `${L.btnOrder}  •  ${fmt(c.total)}` : (c.nights.length ? L.eTime : L.btnPick);
+  const label = ready ? (step === 1 ? `${STEP.next}  →  ${fmt(c.total)}` : `${L.btnOrder}  •  ${fmt(c.total)}`) : (c.nights.length ? L.eTime : L.btnPick);
   if (inTelegram) {
     // matn, rang va holatni bitta chaqiruvda yangilaymiz (aks holda Telegram eski summani ko'rsatib qolishi mumkin)
     tg.MainButton.setParams({ text: label, color: ready ? "#2f8cff" : "#252b38", text_color: ready ? "#ffffff" : "#6b7488", is_active: !!ready, is_visible: true });
@@ -687,7 +739,7 @@ document.querySelectorAll("#deliverySeg button").forEach(b => b.onclick = () => 
   document.querySelectorAll("#deliverySeg button").forEach(x => x.classList.toggle("active", x===b));
   state.delivery = b.dataset.v; $("addressBox").style.display = state.delivery==="delivery" ? "" : "none"; renderSummary();
 });
-$("fallbackBtn").onclick = submit;
+$("fallbackBtn").onclick = mainAction;
 document.querySelectorAll("#paySeg button").forEach(b => b.onclick = () => {
   haptic("sel"); document.querySelectorAll("#paySeg button").forEach(x => x.classList.toggle("active", x===b));
   state.pay = b.dataset.v; renderSummary();
@@ -713,7 +765,8 @@ if (inTelegram && typeof tg.requestContact === "function") {
 if (inTelegram) {
   tg.ready(); tg.expand();
   try { tg.setHeaderColor("#0b0d12"); tg.setBackgroundColor("#0b0d12"); tg.setBottomBarColor && tg.setBottomBarColor("#0b0d12"); } catch(e){}
-  tg.MainButton.onClick(submit);
+  tg.MainButton.onClick(mainAction);
+  try { tg.BackButton.onClick(() => goStep(1)); } catch(e){}
   const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
   if (u) $("name").value = [u.first_name, u.last_name].filter(Boolean).join(" ");
 }
