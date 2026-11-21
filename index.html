@@ -357,7 +357,6 @@
       <span><i style="background:linear-gradient(180deg,#2c3342,#1b1f29);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 2px 4px rgba(0,0,0,.4)"></i><span data-i="lFree"></span></span>
       <span><i class="lk"></i><span data-i="lBusy"></span></span>
       <span><i style="background:#2b95ff;box-shadow:0 0 0 1.5px rgba(255,255,255,.55)"></i><span data-i="lSel"></span></span>
-      <span><i style="background:linear-gradient(180deg,#2c3342,#1b1f29);box-shadow:inset 0 0 0 1.5px rgba(255,181,71,.8)"></i><span data-i="lSp"></span></span>
       <span><i style="background:linear-gradient(135deg,#ff3d6e,#ffb547)"></i><span data-i="lMx"></span></span>
     </div>
   </div>
@@ -640,9 +639,9 @@ function renderCalendar(){
     const s = iso(new Date(y,m,d)); const p = priceOf(s);
     let cls = "day", click = false, sub = "";
     if (s < TODAY) cls += " past";
-    else if (sel.has(s)) { cls += " sel"; click = true; sub = short(p); }
+    else if (sel.has(s)) { cls += " sel"; click = true; }
     else if (retDays.has(s)) { cls += " ret"; click = nightFree(s); sub = "↩"; }
-    else if (nightFree(s)) { cls += " free t"+tierOf(p); click = true; sub = short(p); }
+    else if (nightFree(s)) { cls += " free t"+tierOf(p); click = true; }
     else if (mxOpen(s)) { cls += " free"; click = true; }
     else cls += " busy";
     if (s === TODAY) cls += " today";
@@ -651,10 +650,11 @@ function renderCalendar(){
     const open_ = s >= TODAY && (sel.has(s) || nightFree(s));
     const mxDay = !promoDay && !sel.has(s) && !retDays.has(s) && mxOpen(s);
     const spDay = !promoDay && !mxDay && SPECIAL[s] && open_;
-    if (mxDay) cls += " mx"; else if (spDay) cls += " spd";
-    const ak = promoDay ? `<span class="ak">${sel.has(s) ? short(PROMO.price) : L.promoDay}</span>`
+    if (mxDay) cls += " mx";
+    // kun tugmalarida narx yozilmaydi (egasi so'radi) — narx faqat pastdagi jami summada
+    const ak = promoDay ? `<span class="ak">${L.promoDay}</span>`
              : mxDay ? `<span class="ak">${L.mxDay}</span>`
-             : spDay ? `<span class="ak">${short(SPECIAL[s])}</span>` : "";
+             : "";
     html += `<div class="${cls}" ${click?`data-d="${s}"`:""}>${d}${sub?`<span class="pr">${sub}</span>`:""}${ak}</div>`;
   }
   $("grid").innerHTML = html;
@@ -680,8 +680,6 @@ function pickDay(s){
   renderCalendar(); renderTimes(); renderSummary();
   const el = document.querySelector(`.day[data-d="${s}"]`);
   if (el && anim) el.classList.add(anim);
-  if (anim === "flip" && PROMO && s >= PROMO.from && s <= PROMO.to && !SPECIAL[s]) $("hint").textContent = L.promoPicked.replace("{p}", fmt(PROMO.price));
-  else if (anim === "flip" && SPECIAL[s]) $("hint").textContent = L.spPicked.replace("{p}", fmt(SPECIAL[s]));
 }
 
 // Do'st chegirmasi (fd) va bonus hisobi (bal) — bot foydalanuvchiga xos yuboradi
