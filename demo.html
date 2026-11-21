@@ -164,6 +164,16 @@
   .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
   .trust div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;font-size:11px;color:var(--muted);font-weight:600}
   .trust div b{display:block;font-size:18px;margin-bottom:4px}
+  .idok{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .2s,box-shadow .2s}
+  .idok input{position:absolute;opacity:0;pointer-events:none}
+  .idok .box{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid var(--muted);display:grid;place-items:center;margin-top:1px;transition:background .15s,border-color .15s}
+  .idok .box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px);opacity:0;transition:opacity .15s}
+  .idok input:checked + .box{background:#2f8cff;border-color:#2f8cff}
+  .idok input:checked + .box::after{opacity:1}
+  .idok .tx{display:flex;flex-direction:column;gap:3px}
+  .idok .tx b{font-size:14px}
+  .idok .tx small{font-size:12px;color:var(--muted);line-height:1.45}
+  .idok.err{border-color:var(--bad);box-shadow:0 0 0 3px rgba(255,77,94,.18)}
   .rules{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7;padding:0 4px}
 
   .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 65%,transparent);display:none;z-index:5}
@@ -359,6 +369,7 @@
   </div>
   <div class="field" id="addressBox" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12Z"/><circle cx="12" cy="10" r="3"/></svg><input id="address" data-ph="address"></div>
   <div class="field ta"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><textarea id="comment" rows="2" data-ph="comment"></textarea></div>
+  <label class="idok" id="idBox"><input type="checkbox" id="idok"><span class="box"></span><span class="tx"><b data-i="idT"></b><small data-i="idS"></small></span></label>
 </div>
 
 <div class="sec">
@@ -395,7 +406,7 @@
    Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
    O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
 const DEFAULTS = { wd: 280000, we: 300000, sp: "",
-  open: "2026-11-24T18:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-25T20:00",
+  open: "2026-11-24T18:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-31T20:00",
   monthsAhead: 12, photo: "ps5_gta.jpg?v=3", hours: [18,19,20],
   blocked: ["2026-11-23","2026-11-26","2026-11-27","2026-11-28","2026-11-29","2026-11-30","2026-12-01","2026-12-02"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
 /* ========================================================== */
@@ -410,7 +421,7 @@ const I18N = {
         share:"📱 Telegram raqamimni qo'yish", shared:"✅ Raqam qo'yildi", pickup:"🏠 O'zim olib ketaman", delivery:"🚕 Yetkazib berish",
         rPick:"Olish", rRet:"Qaytarish", rNights:"Kunlar", rDelivery:"Yetkazib berish", negotiable:"kelishiladi", rTotal:"Jami", dFriend:"🎁 Do'st chegirmasi", dBonus:"🎁 Bonus", dHint:"🎁 Chegirma/bonus Du–Pa kechalariga ishlaydi",
         chSub:"Yangiliklar, chegirmalar va bo'sh kunlar", t1:"Tekshirilgan konsol", t2:"Tez tasdiqlash", t3:"O'yinlar o'rnatilgan",
-        rules:"• 1 sutka = 24 soat. Narx sutka boshlangan kunga qarab hisoblanadi.<br>• Olib ketishda pasport yoki zalog talab qilinadi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
+        idT:"🪪 Pasport yoki ID karta", idS:"Buyurtmadan so'ng bot shu chatda hujjat rasmini so'raydi. Olib ketishda asl hujjatni ko'rsataman.", eId:"🪪 Pasport / ID karta bandiga belgi qo'ying", rules:"• 1 sutka = 24 soat. Narx sutka boshlangan kunga qarab hisoblanadi.<br>• Buyurtmadan so'ng bot pasport yoki ID karta rasmini so'raydi, olib ketishda asl hujjat ko'rsatiladi.<br>• Buyurtmadan so'ng admin siz bilan bog'lanib tasdiqlaydi.",
         nights:"kun", som:"so'm", from:"dan", until:"gacha", agreed:"kelishiladi",
         btnPick:"Olish kunini tanlang", btnEnd:"Qaytarish kunini tanlang", btnOrder:"Buyurtma berish",
         eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
@@ -424,7 +435,7 @@ const I18N = {
         share:"📱 Подставить мой номер из Telegram", shared:"✅ Номер добавлен", pickup:"🏠 Самовывоз", delivery:"🚕 Доставка",
         rPick:"Получение", rRet:"Возврат", rNights:"Дней", rDelivery:"Доставка", negotiable:"по договорённости", rTotal:"Итого", dFriend:"🎁 Скидка друга", dBonus:"🎁 Бонус", dHint:"🎁 Скидка/бонус действуют на ночи Пн–Чт",
         chSub:"Новости, скидки и свободные даты", t1:"Проверенная консоль", t2:"Быстрое подтверждение", t3:"Игры установлены",
-        rules:"• 1 сутки = 24 часа. Цена считается по дню начала суток.<br>• При получении нужен паспорт или залог.<br>• После заказа администратор свяжется с вами для подтверждения.",
+        idT:"🪪 Паспорт или ID-карта", idS:"После заказа бот попросит фото документа в этом чате. При получении покажу оригинал.", eId:"🪪 Отметьте пункт о паспорте / ID-карте", rules:"• 1 сутки = 24 часа. Цена считается по дню начала суток.<br>• После заказа бот попросит фото паспорта или ID-карты, при получении покажете оригинал.<br>• После заказа администратор свяжется с вами для подтверждения.",
         nights:"дн.", som:"сум", from:"с", until:"до", agreed:"по договорённости",
         btnPick:"Выберите день получения", btnEnd:"Выберите день возврата", btnOrder:"Оформить заказ",
         eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
@@ -438,7 +449,7 @@ const I18N = {
         share:"📱 Use my Telegram number", shared:"✅ Number added", pickup:"🏠 Pickup", delivery:"🚕 Delivery",
         rPick:"Pickup", rRet:"Return", rNights:"Days", rDelivery:"Delivery", negotiable:"negotiable", rTotal:"Total", dFriend:"🎁 Friend discount", dBonus:"🎁 Bonus", dHint:"🎁 Discount/bonus apply to Mon–Thu nights",
         chSub:"News, discounts and free dates", t1:"Checked console", t2:"Fast confirmation", t3:"Games installed",
-        rules:"• 1 day = 24 hours. The price depends on the day the 24h period starts.<br>• ID or a deposit is required at pickup.<br>• After ordering, the admin will contact you to confirm.",
+        idT:"🪪 Passport or ID card", idS:"After ordering, the bot will ask for a photo of the document in this chat. I'll show the original at pickup.", eId:"🪪 Please tick the passport / ID box", rules:"• 1 day = 24 hours. The price depends on the day the 24h period starts.<br>• After ordering, the bot will ask for a photo of your passport or ID; show the original at pickup.<br>• After ordering, the admin will contact you to confirm.",
         nights:"days", som:"UZS", from:"from", until:"until", agreed:"by agreement",
         btnPick:"Pick the pickup day", btnEnd:"Pick the return day", btnOrder:"Place order",
         eRange:"Booked days in range — pick another date", eDays:"Pick your dates first", eName:"Enter your full name", ePhone:"Enter a valid phone number", eAddr:"Enter your address",
@@ -680,6 +691,7 @@ function mainAction(){
   else submit();
 }
 $("backBtn").onclick = () => goStep(1);
+$("idok").onchange = () => { haptic("sel"); $("idBox").classList.remove("err"); };
 $("st1").querySelector("em").textContent = STEP.s1; $("st2").querySelector("em").textContent = STEP.s2;
 $("backBtn").querySelector("span").textContent = STEP.back;
 
@@ -716,9 +728,10 @@ function submit(){
   if (name.length < 2) { $("name").focus(); return toast(L.eName); }
   if (phone.replace(/\D/g,"").length < 9) { $("phone").focus(); return toast(L.ePhone); }
   if (state.delivery==="delivery" && address.length < 5) { $("address").focus(); return toast(L.eAddr); }
+  if (!$("idok").checked) { const b = $("idBox"); b.classList.add("err"); b.scrollIntoView({behavior:"smooth", block:"center"}); haptic("error"); return toast(L.eId); }
   haptic("success");
   const order = { lang:LANG, product:"ps5", start:state.start, end:state.end, dates:state.sorted, days:c.nights.length, pick_time:state.time, ret_time:state.time,
-                  delivery:state.delivery, pay:state.pay, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total };
+                  delivery:state.delivery, pay:state.pay, address, name, phone, comment:$("comment").value.trim().slice(0,300), total:c.total, idok:true };
   alert("🧪 DEMO: buyurtma yuborilmaydi.\n\n" + c.groups.map(g => `${g.c} × ${fmt(g.p)} (${g.tier})`).join("\n") + "\n\nJami: " + fmt(c.total));
   return;
   if (inTelegram) {
