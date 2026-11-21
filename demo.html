@@ -303,7 +303,7 @@
 </style>
 </head>
 <body>
-<div style="margin:12px 14px 0;padding:10px 14px;border-radius:12px;background:#ffb547;color:#1a1200;font-weight:700;font-size:13.5px">🧪 DEMO — dekabr narxlari sinovi. Kalendarda har kunning narxi ko'rinadi. Buyurtma yuborilmaydi, faqat hisoblab ko'rsatadi.</div>
+<div style="margin:12px 14px 0;padding:10px 14px;border-radius:12px;background:#ffb547;color:#1a1200;font-weight:700;font-size:13.5px">🧪 DEMO — aksiya 250 000, dekabr 300 000. Buyurtma yuborilmaydi, faqat hisoblab ko'rsatadi.</div>
 
 <div class="head">
   <div>
@@ -415,7 +415,7 @@
    Narx va bo'sh vaqtni bot o'zi URL orqali yuboradi (bot.py dagi sozlamalar).
    Quyidagilar faqat brauzerda sinash uchun standart qiymatlar.
    O'z PS5 suratingizni "ps5.jpg" nomi bilan index.html yoniga yuklang.            */
-const DEFAULTS = { wd: 250000, we: 280000, sp: "2026-12-04:300000,2026-12-05:330000,2026-12-06:330000,2026-12-11:300000,2026-12-12:330000,2026-12-13:330000,2026-12-18:300000,2026-12-19:330000,2026-12-20:330000,2026-12-25:350000,2026-12-26:400000,2026-12-27:400000,2026-12-28:350000,2026-12-29:350000,2026-12-30:350000,2026-12-31:350000", promo: "2026-11-01..2026-11-30:230000",
+const DEFAULTS = { wd: 250000, we: 280000, sp: "2026-12-01..2026-12-31:300000", promo: "2026-11-01..2026-11-30:250000",
   open: "2026-11-24T18:00..2026-11-26T20:00;2026-12-01T18:00..2026-12-31T20:00",
   monthsAhead: 12, photo: "ps5_gta.jpg?v=3", hours: [18,19,20],
   blocked: ["2026-11-23","2026-11-26","2026-11-27","2026-11-28","2026-11-29","2026-11-30","2026-12-01","2026-12-02"] };  // band kunlar (bot yubormasa ham band ko'rinadi)  // hozircha faqat kechqurun, 20:00 gacha
@@ -423,7 +423,7 @@ const DEFAULTS = { wd: 250000, we: 280000, sp: "2026-12-04:300000,2026-12-05:330
 
 const I18N = {
   uz: { payCash:"💵 Naqd", payCard:"💳 Karta (Click/Payme)", rPay:"To'lov", payNote:"konsolni olganda", sTime:"Olish vaqti", tNote:"↩️ Qaytarish — {d}, soat {h} (har bir kun = 24 soat).", tNone:"Bu kunlar uchun mos vaqt yo'q — boshqa sanani tanlang", eTime:"Olish vaqtini tanlang", tagline:"Toshkentda PS5 ijarasi — kunlik, qulay va tez", gtaT:"GTA 6 bor! 🔥", gtaS:"Konsolda o'rnatilgan — birinchilardan bo'lib o'ynang", hrsLbl:"🌙 Olib ketish / qaytarish: ", eveOnly:"Hozircha faqat kechqurun", chShort:"Kanal", sub:"Konsol + 2 ta DualSense pult + o'yinlar",
-        wd:"Du – Ju", we:"Sh – Ya", sp:"Bayram narxlari", promo:"AKSIYA", promoTo:"{d} gacha", promoDay:"aksiya", promoPicked:"🔥 Aksiya kuni — kuniga atigi {p}!", spPicked:"⭐ Bu kun narxi — {p} / sutka (3+ kun olsangiz arzonroq)", lSp:"Bayram narxi", perDay:"/ sutka", chips:["🔥 GTA 6","PS Plus Deluxe","Mashhur o'yinlar"],
+        wd:"Du – Ju", we:"Sh – Ya", sp:"Dekabr narxi", promo:"AKSIYA", promoTo:"{d} gacha", promoDay:"aksiya", promoPicked:"🔥 Aksiya kuni — kuniga atigi {p}!", spPicked:"⭐ Bu kun narxi — {p} / sutka (3+ kun olsangiz arzonroq)", lSp:"Dekabr narxi", perDay:"/ sutka", chips:["🔥 GTA 6","PS Plus Deluxe","Mashhur o'yinlar"],
         freeNow:"Bron uchun ochiq", noFree:"Hozircha bo'sh kun yo'q", availTitle:"Bo'sh vaqt", s1:"Kunlarni tanlang", s3:"Ma'lumotlaringiz", s4:"Hisob-kitob",
         lFree:"Bo'sh", lBusy:"Band", lSel:"Tanlangan", lWe:"Qimmatroq",
         hint0:"👆 Kerakli kunlarni bosing — har bir bosilgan kun ko'k bo'ladi", hint1:"✅ Yana kun qo'shish uchun bosing. Bekor qilish uchun ko'k kunni qayta bosing", hint2:"", period:["🌅 Ertalab","☀️ Kunduzi","🌙 Kechqurun"], retLbl:"qaytarish",
@@ -437,7 +437,7 @@ const I18N = {
         eRange:"Oraliqda band kun bor — boshqa sanani tanlang", eDays:"Avval sanalarni tanlang", eName:"Ism-familiyangizni yozing", ePhone:"Telefon raqamni to'g'ri yozing", eAddr:"Manzilni yozing",
         months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"], dow:["Du","Se","Ch","Pa","Ju","Sh","Ya"] },
   ru: { payCash:"💵 Наличные", payCard:"💳 Карта (Click/Payme)", rPay:"Оплата", payNote:"при получении", sTime:"Время получения", tNote:"↩️ Возврат — {d}, в {h} (каждый день = 24 часа).", tNone:"Для этих дат нет подходящего времени — выберите другие", eTime:"Выберите время получения", tagline:"Аренда PS5 в Ташкенте — посуточно, удобно и быстро", gtaT:"Есть GTA 6! 🔥", gtaS:"Уже установлена — играйте одними из первых", hrsLbl:"🌙 Получение / возврат: ", eveOnly:"Пока только вечером", chShort:"Канал", sub:"Консоль + 2 геймпада DualSense + игры",
-        wd:"Пн – Пт", we:"Сб – Вс", sp:"Праздничные цены", promo:"АКЦИЯ", promoTo:"до {d}", promoDay:"акция", promoPicked:"🔥 День акции — всего {p} в сутки!", spPicked:"⭐ Цена этого дня — {p} / сутки (от 3 суток дешевле)", lSp:"Праздничная цена", perDay:"/ сутки", chips:["🔥 GTA 6","PS Plus Deluxe","Топовые игры"],
+        wd:"Пн – Пт", we:"Сб – Вс", sp:"Цена в декабре", promo:"АКЦИЯ", promoTo:"до {d}", promoDay:"акция", promoPicked:"🔥 День акции — всего {p} в сутки!", spPicked:"⭐ Цена этого дня — {p} / сутки (от 3 суток дешевле)", lSp:"Цена декабря", perDay:"/ сутки", chips:["🔥 GTA 6","PS Plus Deluxe","Топовые игры"],
         freeNow:"Открыто для брони", noFree:"Пока нет свободных дней", availTitle:"Свободное время", s1:"Выберите даты", s3:"Ваши данные", s4:"Расчёт",
         lFree:"Свободно", lBusy:"Занято", lSel:"Выбрано", lWe:"Дороже",
         hint0:"👆 Нажмите нужные дни — каждый выбранный день станет синим", hint1:"✅ Нажмите ещё, чтобы добавить дни. Чтобы убрать — нажмите синий день снова", hint2:"", period:["🌅 Утро","☀️ День","🌙 Вечер"], retLbl:"возврат",
@@ -451,7 +451,7 @@ const I18N = {
         eRange:"В диапазоне есть занятые дни — выберите другую дату", eDays:"Сначала выберите даты", eName:"Укажите имя и фамилию", ePhone:"Укажите правильный номер", eAddr:"Укажите адрес",
         months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"], dow:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"] },
   en: { payCash:"💵 Cash", payCard:"💳 Card (Click/Payme)", rPay:"Payment", payNote:"at pickup", sTime:"Pickup time", tNote:"↩️ Return — {d} at {h} (each day = 24 hours).", tNone:"No suitable time for these dates — pick other dates", eTime:"Pick a pickup time", tagline:"PS5 rental in Tashkent — daily, easy and fast", gtaT:"GTA 6 is here! 🔥", gtaS:"Installed and ready — be among the first to play", hrsLbl:"🌙 Pickup / return: ", eveOnly:"Evenings only for now", chShort:"Channel", sub:"Console + 2 DualSense controllers + games",
-        wd:"Mon – Fri", we:"Sat – Sun", sp:"Holiday prices", promo:"PROMO", promoTo:"until {d}", promoDay:"promo", promoPicked:"🔥 Promo day — just {p} per day!", spPicked:"⭐ This day costs {p} / day (cheaper from 3 days)", lSp:"Holiday price", perDay:"/ day", chips:["🔥 GTA 6","PS Plus Deluxe","Top games"],
+        wd:"Mon – Fri", we:"Sat – Sun", sp:"December price", promo:"PROMO", promoTo:"until {d}", promoDay:"promo", promoPicked:"🔥 Promo day — just {p} per day!", spPicked:"⭐ This day costs {p} / day (cheaper from 3 days)", lSp:"December price", perDay:"/ day", chips:["🔥 GTA 6","PS Plus Deluxe","Top games"],
         freeNow:"Open for booking", noFree:"No free days yet", availTitle:"Available", s1:"Pick your dates", s3:"Your details", s4:"Price breakdown",
         lFree:"Available", lBusy:"Booked", lSel:"Selected", lWe:"Higher price",
         hint0:"👆 Tap the days you need — each selected day turns blue", hint1:"✅ Tap more days to add. Tap a blue day again to remove it", hint2:"", period:["🌅 Morning","☀️ Afternoon","🌙 Evening"], retLbl:"return",
@@ -508,7 +508,9 @@ const NEWBOT = params.has("hrs");
 const P = k => NEWBOT ? params.get(k) : null;
 const WD = +P("wd") || DEFAULTS.wd, WE = +P("we") || DEFAULTS.we;
 const SPECIAL = {};
-(P("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (d && +v) SPECIAL[d] = +v; });
+// "kun:narx" yoki "boshi..oxiri:narx" (oraliq — havola qisqa bo'lishi uchun)
+(P("sp") ?? DEFAULTS.sp).split(",").filter(Boolean).forEach(x => { const [d,v] = x.split(":"); if (!d || !(+v)) return;
+  const [a,b] = d.split(".."); for (let k = a, i = 0; k <= (b || a) && i < 400; k = addDays(k,1), i++) SPECIAL[k] = +v; });
 const booked = new Set([...(params.get("ps5") || "").split(",").filter(Boolean), ...(params.has("hrs") ? [] : DEFAULTS.blocked)]);
 // Bo'sh oraliqlar: [{from:"YYYY-MM-DD", fromT:"HH:MM", to:"YYYY-MM-DD", toT:"HH:MM"}, ...]. Bo'sh ro'yxat = hamma kun ochiq.
 const openRaw = NEWBOT ? (params.get("open") || "") : DEFAULTS.open;
